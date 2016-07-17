@@ -13,6 +13,6 @@ TODO:
 - en klub skal kunne promote en bruger til admins og til træner
 
 - drift setup
-
+- about page
 
 - Hvis en bruger slettes imens en klient har hentet fx en klub med liste af spiller hvor den slettede spiller er i, kan denne klient ikke POST/PUT da spillerene nu ikke eksisterer. Klienten har ingen nem måde at tjekke på

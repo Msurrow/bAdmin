@@ -1,7 +1,9 @@
-from flask import Flask, jsonify, request, abort, make_response
+from flask import Flask, jsonify, request, abort, make_response, send_file
+from flask.ext.cors import CORS
 from datetime import datetime
 
 app = Flask(__name__)
+CORS(app)
 
 database = {"brugere": [{"id": 0, "name": "Anton", "clubs": [], "email": "", "phone": 12345678}, {"id": 1, "name": "Huggo", "clubs": [], "email": "", "phone": 12345678}, {"id": 2, "name": "Træner Kvinde", "clubs": [0, 1], "email": "", "phone": 12345678}, {"id": 3, "name": "Træner Mand", "clubs": [0], "email": "", "phone": 12345678}], 
             "klubber": [{"id": 0, "name": "FooKlub", "admins": [], "coaches": [], "membershipRequests": []}, {"id": 1, "name": "BarKlub", "admins": [1], "coaches": [1], "membershipRequests": []}],
@@ -9,7 +11,9 @@ database = {"brugere": [{"id": 0, "name": "Anton", "clubs": [], "email": "", "ph
 
 @app.route("/")
 def index():
-    return "Velkommen til bAdmin portalen!"
+    return send_file("templates/index.html")
+
+
 """
 Brugere
 Bruger datatype:
@@ -271,3 +275,6 @@ def bad_request(error):
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0")
