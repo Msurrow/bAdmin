@@ -2,29 +2,30 @@
 
 var myAuthService = angular.module('authService', []);
 
-myAuthService.factory('gatekeeper', function() {
+myAuthService.factory('gatekeeper', ['$log', function($log) {
     var loggedIn = false
     var userId = -1
     var userName = ''
 
-    var doLogin = function doLogin(userName, userId) {
-        console.log("gatekeeper setting user")
-        userId = userId;
-        userName = userName;
-        loggedIn = true;
+    var doLogin = function doLogin(uid, name) {
+        $log.debug("gatekeeper setting user: "+uid+" , "+name);
+        this.userId = uid;
+        this.userName = name;
+        this.loggedIn = true;
     }
 
     var doLogout = function doLogout() {
-        console.log("gatekeeper unsetting user")
-        userId = -1;
-        userName = '';
-        loggedIn = false;
+        $log.debug("gatekeeper unsetting user")
+        this.userId = -1;
+        this.userName = '';
+        this.loggedIn = false;
     }
 
     return {
         loggedIn: loggedIn,
         userId: userId,
         userName: userName,
-        doLogin: doLogin
+        doLogin: doLogin,
+        doLogout: doLogout
     };
-});
+}]);
