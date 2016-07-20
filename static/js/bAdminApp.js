@@ -170,16 +170,44 @@ myApp.controller('clubController', ['$scope', '$log', '$location', 'gatekeeper',
     $scope.listOfClubs;
     $scope.searchText = "";
 
+    var updateClubs = function() {
+                            bAdminAPI.getClubs().then(
+                                function(response) {
+                                    $log.debug("Response from API call:");
+                                    $log.debug(response.data);
+
+                                    $scope.listOfClubs = response.data;
+                                },
+                                function(error) {
+                                    $log.debug("Error response from API call:");
+                                    $log.debug(error);
+                                }
+                            );    
+                        }     
+
     $scope.applyAsMember = function(club) {
         bAdminAPI.applyForMembership(club).then(
             function(response) {
                 $log.debug("Response from API call:");
                 $log.debug(response.data);
+                updateClubs();
             },
             function(error) {
                 $log.debug("Error response from API call:");
                 $log.debug(error);                
             });
+    };
+
+    $scope.membershipAlreadyRequested = function(klub) {
+        var result = true;
+
+        angular.forEach(klub.membershipRequests, function(memReqUserId) {
+            if (memReqUserId == gatekeeper.userId) {
+                result = false;
+            }
+        });
+
+        return result;
     };
 
     //Init the controller
@@ -189,18 +217,7 @@ myApp.controller('clubController', ['$scope', '$log', '$location', 'gatekeeper',
             $log.debug("user not logged in, redirecting to /login");
             $location.path("/login");
         } else {
-            bAdminAPI.getClubs().then(
-                function(response) {
-                    $log.debug("Response from API call:");
-                    $log.debug(response.data);
-
-                    $scope.listOfClubs = response.data;
-                },
-                function(error) {
-                    $log.debug("Error response from API call:");
-                    $log.debug(error);
-                }
-            );  
+            updateClubs();
         }
     })();
 }]);

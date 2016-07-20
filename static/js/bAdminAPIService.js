@@ -34,7 +34,7 @@ bAdminAPIService.factory('bAdminAPI', ['$log', '$http', 'gatekeeper', function($
     }
     
     bAdminAPIFactory.applyForMembership = function(clubObj) {
-        var mreqs = clubObj.membershipRequests;
+        var mreqs = clubObj.membershipRequests.slice();
         mreqs.push(gatekeeper.userId);
 
         $log.debug("PUT club with membershipRequests: ", mreqs, " (original was: ", clubObj.membershipRequests, " )");

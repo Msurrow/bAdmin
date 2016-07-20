@@ -275,7 +275,7 @@ def practice(practiceId):
 Helpers and error handlers
 """
 def doesUserExist(userId):
-    bruger = [bruger for bruger in database["brugere"] if bruger["id"] == userId]
+    bruger = [bruger for bruger in database["brugere"] if bruger["id"] == int(userId)]
     if len(bruger) == 0:
         return False
     else:
@@ -285,11 +285,8 @@ def doesAllUsersInListExist(userIDList):
     if not isinstance(userIDList, list):
         app.logger.warning("Called doesAllUsersInListExist with param that is not a list: ", userIDList)
 
-    app.logger.debug(database["brugere"])
     for bruger in userIDList:
-        app.logger.debug("trying user: "+bruger)
         if not doesUserExist(bruger):
-            app.logger.debug("NOPE on user: "+bruger)
             return False
     return True
 

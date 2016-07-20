@@ -38,6 +38,12 @@
     padding-left: 5px;
 }
 
+#find-club-request-pending-text {
+    margin-left: 10px;
+    font-size: x-small;
+    color: grey;    
+}
+
 #loginbox {
     width:50%;
     margin:auto;
