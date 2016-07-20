@@ -26,6 +26,7 @@
         <!-- Application local -->
         <link rel="stylesheet" href="/static/css/bAdmin.css"/>
         <script src="/static/js/authService.js"></script>
+        <script src="/static/js/bAdminAPIService.js"></script>
         <script src="/static/js/bAdminApp.js"></script>
 
     </head>
@@ -34,8 +35,13 @@
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="#">bAdmin</a>
+                    <a class="navbar-brand" href="#/">bAdmin</a>
                 </div>
+                
+                <div class="navbar-center-text">
+                    <p ng-if="currentUserName">Logget ind som {{currentUserName}}</p>
+                </div>
+                
                 <div class="fb-login-button navbar-right navbar-btn" data-max-rows="1" data-size="small" data-show-faces="false" data-auto-logout-link="true"></div>
             </div>
         </nav>

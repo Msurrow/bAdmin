@@ -1,6 +1,15 @@
-<div class="container" ng-controller="indexController">
-    <h1>Hello {{ yourName }}</h1>
-    <input type="text" ng-model="yourName" placeholder="Enter a name here">
-    {{message}}
-    <a href="/#/about">about</a>
+<div class="container" ng-controller="indexController">    
+    
+    <div id="index-no-clubs" ng-show="currentUserClubs.length == 0">
+        <span class="center-text">Det ser ud til at du ikke endnu er registreret som medlem af en klub.</span><br>
+        <a class="btn btn-success" href="#/findClub">Find klub</a>
+        <a class="btn btn-primary" href="#/createClub">Opret ny klub</a>
+    </div>
+
+    <div id="index-with-clubs" ng-show="currentUserClubs.length > 0">
+        <ul>
+            <li ng-repeat="club in currentUserClubs">{{club}}</li>
+        </ul>
+    </div>
+
 </div>

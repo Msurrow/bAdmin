@@ -33,7 +33,7 @@ class bAdminTestUsers(unittest.TestCase):
         res1 = self.app.get("/brugere")
         jres1 = json.loads(res1.data.decode())
         lastUser = jres1[-1]['id']
-        self.assertEqual(lastUser, 3)
+        self.assertEqual(lastUser, 905226362922379)
 
         name = "Foobar"
         email = "foo@gmail.com"

@@ -1,3 +1,45 @@
 #partial-content-container {
-    padding-top: 50px
+    padding-top: 100px;
+}
+
+#index-no-clubs {
+    width:70%;
+    margin:auto;
+    text-align: center;
+    font-size: x-large;
+}
+#index-no-clubs>.btn {
+    margin-top: 50px;
+    margin-left: 20px;
+    margin-right: 20px;
+    width: 250px;
+    height: 70px;
+    text-align: center;
+    font-size: x-large;
+    padding-top: 15px;
+}
+
+#find-club-container {
+    
+}
+#find-club-container>ul {
+    list-style-type: none;
+    font-size: large;
+    color: grey;
+    margin-top: 20px;
+    padding-left: 0px;
+}
+.find-club-btn {
+    margin-left: 10px;
+    font-size: x-small;
+    width: 65px;
+    height: 20px;
+    padding-top: 0px;
+    padding-left: 5px;
+}
+
+#loginbox {
+    width:50%;
+    margin:auto;
+    text-align: center;
 }

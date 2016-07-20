@@ -6,6 +6,7 @@ myAuthService.factory('gatekeeper', ['$log', function($log) {
     var loggedIn = false
     var userId = -1
     var userName = ''
+    var userAccessToken = 'facebook-access-token#TODO'
 
     var doLogin = function doLogin(uid, name) {
         $log.debug("gatekeeper setting user: "+uid+" , "+name);
@@ -26,6 +27,7 @@ myAuthService.factory('gatekeeper', ['$log', function($log) {
         userId: userId,
         userName: userName,
         doLogin: doLogin,
-        doLogout: doLogout
+        doLogout: doLogout,
+        userAccessToken: userAccessToken
     };
 }]);

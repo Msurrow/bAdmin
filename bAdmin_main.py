@@ -5,7 +5,7 @@ from datetime import datetime
 app = Flask(__name__)
 CORS(app)
 
-database = {"brugere": [{"id": 0, "name": "Anton", "clubs": [], "email": "", "phone": 12345678}, {"id": 1, "name": "Huggo", "clubs": [], "email": "", "phone": 12345678}, {"id": 2, "name": "Træner Kvinde", "clubs": [0, 1], "email": "", "phone": 12345678}, {"id": 3, "name": "Træner Mand", "clubs": [0], "email": "", "phone": 12345678}], 
+database = {"brugere": [{"id": 0, "name": "Anton", "clubs": [], "email": "", "phone": 12345678}, {"id": 1, "name": "Huggo", "clubs": [], "email": "", "phone": 12345678}, {"id": 2, "name": "Træner Kvinde", "clubs": [0, 1], "email": "", "phone": 12345678}, {"id": 3, "name": "Træner Mand", "clubs": [0], "email": "", "phone": 12345678}, {"id": 905226362922379, "name": "Mark Surrow", "clubs": [], "email": "msurrow@gmail.com", "phone": 60131201}], 
             "klubber": [{"id": 0, "name": "FooKlub", "admins": [], "coaches": [], "membershipRequests": []}, {"id": 1, "name": "BarKlub", "admins": [1], "coaches": [1], "membershipRequests": []}],
             "traeningspas": [{"id": 0, "club": 0, "startTime": datetime(2016, 12, 24, 18, 00, 00), "durationMinutes": 120, "invited": [0, 1], "confirmed": [0]}]}
 
@@ -48,11 +48,18 @@ def users():
 
 @app.route("/brugere/<int:userId>", methods=['GET'])
 def user(userId):
+    print("Auth dummy: ", request.args.get('userID'), ", ", request.args.get('userAccessToken'))
+
     bruger = [bruger for bruger in database["brugere"] if bruger["id"] == userId]
     if len(bruger) == 0:
         abort(404)
 
     return jsonify(bruger[0])
+
+@app.route("/brugere/<int:userId>/traeningspas", methods=['GET'])
+def userTraeningspas(userId):
+    # TODO: Test cases
+    return jsonify({})
 
 """
 Klubber
@@ -105,11 +112,18 @@ def club(clubId):
         if not request.json:
             abort(400)
 
+        newName = klub[0]['name']
+        newAdmins = klub[0]['admins']
+        newCoaches = klub[0]['coaches']
+        newMembershipRequests = klub[0]['membershipRequests']
+
         # Are we updating name? If so, validate and update
         if 'name' in request.json:
             # Don't allow empty name
             if request.json['name'] is "" or len(request.json['name']) < 1:
                 abort(400)
+            else:
+                newName = request.json['name']
 
         # Are we updating admins list? If so, validate and update. Overwrite
         # existing with input
@@ -118,6 +132,8 @@ def club(clubId):
             # users
             if not isinstance(request.json['admins'], list) or len(request.json['admins']) < 1 or not doesAllUsersInListExist(request.json['admins']):
                 abort(400)
+            else:
+                newAdmins = request.json['admins']
 
         # Are we updating coaches list? If so, validate and update. Overwrite
         # existing with input
@@ -125,6 +141,8 @@ def club(clubId):
             # Check all coaches in list are users
             if not isinstance(request.json['coaches'], list) or not doesAllUsersInListExist(request.json['coaches']):
                 abort(400)
+            else:
+                newCoaches = request.json['coaches']
 
         # Are we updating membership requests list? If so, validate and update.
         # Overwrite existing with input
@@ -132,11 +150,13 @@ def club(clubId):
             # Check all requests are from actual users
             if not isinstance(request.json['membershipRequests'], list) or not doesAllUsersInListExist(request.json['membershipRequests']):
                 abort(400)
+            else:
+                newMembershipRequests = request.json['membershipRequests']
 
-        klub[0]['name'] = request.json['name']
-        klub[0]['admins'] = request.json['admins']
-        klub[0]['coaches'] = request.json['coaches']
-        klub[0]['membershipRequests'] = request.json['membershipRequests']
+        klub[0]['name'] =  newName
+        klub[0]['admins'] = newAdmins
+        klub[0]['coaches'] = newCoaches
+        klub[0]['membershipRequests'] = newMembershipRequests
 
         return jsonify(klub[0])
     # GET
@@ -264,8 +284,12 @@ def doesUserExist(userId):
 def doesAllUsersInListExist(userIDList):
     if not isinstance(userIDList, list):
         app.logger.warning("Called doesAllUsersInListExist with param that is not a list: ", userIDList)
+
+    app.logger.debug(database["brugere"])
     for bruger in userIDList:
+        app.logger.debug("trying user: "+bruger)
         if not doesUserExist(bruger):
+            app.logger.debug("NOPE on user: "+bruger)
             return False
     return True
 

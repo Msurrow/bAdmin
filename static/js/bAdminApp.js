@@ -3,7 +3,8 @@
 var myApp = angular.module('bAdminApp', [
     'ngRoute',
     'ui.bootstrap',
-    'authService'
+    'authService',
+    'bAdminAPIService'
 ]);
 
 myApp.config(['$routeProvider', '$logProvider',
@@ -20,6 +21,12 @@ myApp.config(['$routeProvider', '$logProvider',
             when('/about', {
                 templateUrl: '/static/partials/about.html',
             }).
+            when('/findClub', {
+                templateUrl: '/static/partials/findClub.html',
+            }).
+            when('/createClub', {
+                templateUrl: '/static/partials/createClub.html',
+            }).            
             otherwise({
                 redirectTo: '/'
             });
@@ -119,25 +126,88 @@ myApp.controller('ngviewController', ['$scope', '$log', function($scope, $log) {
     $scope.$on('$viewContentLoaded', function() {
         $log.debug("ON viewContentLoaded");
         //Re-render all Facebook buttons
-        FB.XFBML.parse();
+        if(typeof(FB) != 'undefined') {FB.XFBML.parse();}
     });    
 }]);
 
-myApp.controller('indexController', ['$scope', '$log', 'gatekeeper', '$location', function($scope, $log, gatekeeper, $location) {
+myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location', 'gatekeeper', 'bAdminAPI', function($rootScope, $scope, $log, $location, gatekeeper, bAdminAPI) {
+    $scope.currentUserId; //id: <int>, not null
+    $scope.currentUserName; //name: <string>, not null
+    $scope.currentUserClubs; //clubs: <list:int>, int must be id of existing Klub
+    $scope.currentUserEmail; //email: <string>, valid email
+    $scope.currentUserPhone; //phone: <int:8>, 8-digits valid DK phonenumber
+
+    //Init the controller
     (function(){
         $log.debug("indexController init");
         if(!gatekeeper.loggedIn) {
             $log.debug("user not logged in, redirecting to /login");
             $location.path("/login");
+        } else {
+            bAdminAPI.getUser(gatekeeper.userId).then(
+                function(response) {
+                    $log.debug("Response from API call:");
+                    $log.debug(response.data);
+
+                    $scope.currentUserId = response.data.id;
+                    $scope.currentUserName = response.data.name;
+                    $scope.currentUserPhone = response.data.phone;
+                    $scope.currentUserEmail = response.data.email;
+                    $scope.currentUserClubs = response.data.clubs;
+
+                    $rootScope.currentUserName = $scope.currentUserName;
+                }, 
+                function(error) {
+                    $log.debug("Error response from API call:");
+                    $log.debug(error);
+                }
+            );
         }
     })();
-    
-    // create a message to display in our view
-    $scope.message = 'All the top secret stuff';
+}]);
+
+myApp.controller('clubController', ['$scope', '$log', '$location', 'gatekeeper', 'bAdminAPI', function($scope, $log, $location, gatekeeper, bAdminAPI) {
+    $scope.listOfClubs;
+    $scope.searchText = "";
+
+    $scope.applyAsMember = function(club) {
+        bAdminAPI.applyForMembership(club).then(
+            function(response) {
+                $log.debug("Response from API call:");
+                $log.debug(response.data);
+            },
+            function(error) {
+                $log.debug("Error response from API call:");
+                $log.debug(error);                
+            });
+    };
+
+    //Init the controller
+    (function(){    
+        $log.debug("clubController init");
+        if(!gatekeeper.loggedIn) {
+            $log.debug("user not logged in, redirecting to /login");
+            $location.path("/login");
+        } else {
+            bAdminAPI.getClubs().then(
+                function(response) {
+                    $log.debug("Response from API call:");
+                    $log.debug(response.data);
+
+                    $scope.listOfClubs = response.data;
+                },
+                function(error) {
+                    $log.debug("Error response from API call:");
+                    $log.debug(error);
+                }
+            );  
+        }
+    })();
 }]);
 
 myApp.controller('aboutController', ['$log', 'gatekeeper', '$location', function($log, gatekeeper, $location) {
-        (function(){
+    //Init the controller   
+    (function(){
         $log.debug("aboutController init");
         if(!gatekeeper.loggedIn) {
             $log.debug("user not logged in, redirecting to /login");

@@ -1,0 +1,8 @@
+<div class="container" ng-controller="clubController">
+    <div id="find-club-container">        
+        <input type="text" class="form-control" ng-model="searchText" placeholder="Søg efter en klub">
+        <ul>
+            <li ng-repeat="klub in listOfClubs | filter:searchText">{{klub.name }} <button class="btn btn-success find-club-btn" ng-click="applyAsMember(klub)">Bliv medlem</button></li>
+        </ul>   
+    </div>
+</div>
