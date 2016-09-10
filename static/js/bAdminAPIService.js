@@ -33,6 +33,15 @@ bAdminAPIService.factory('bAdminAPI', ['$log', '$http', 'gatekeeper', function($
         });        
     }
     
+    bAdminAPIFactory.getClub = function(id) {
+        return $http.get(baseUrl+"klubber/" + id, {
+            params: {
+                "userID": gatekeeper.userId,
+                "userAccessToken": gatekeeper.userAccessToken
+            }
+        });        
+    }
+
     bAdminAPIFactory.applyForMembership = function(clubObj) {
         var mreqs = clubObj.membershipRequests.slice();
         mreqs.push(gatekeeper.userId);

@@ -7,9 +7,9 @@
     </div>
 
     <div id="index-with-clubs" ng-show="currentUserClubs.length > 0">
-        <ul>
-            <li ng-repeat="club in currentUserClubs">{{club}}</li>
-        </ul>
+        <table id="index-club-list">
+            <tr ng-repeat="club in currentUserClubs">{{club}}</tr>
+        </table>
     </div>
 
 </div>

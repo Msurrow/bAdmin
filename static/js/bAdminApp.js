@@ -133,7 +133,7 @@ myApp.controller('ngviewController', ['$scope', '$log', function($scope, $log) {
 myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location', 'gatekeeper', 'bAdminAPI', function($rootScope, $scope, $log, $location, gatekeeper, bAdminAPI) {
     $scope.currentUserId; //id: <int>, not null
     $scope.currentUserName; //name: <string>, not null
-    $scope.currentUserClubs; //clubs: <list:int>, int must be id of existing Klub
+    $scope.currentUserClubs = []; //clubs: <list:int>, int must be id of existing Klub
     $scope.currentUserEmail; //email: <string>, valid email
     $scope.currentUserPhone; //phone: <int:8>, 8-digits valid DK phonenumber
 
@@ -153,7 +153,18 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
                     $scope.currentUserName = response.data.name;
                     $scope.currentUserPhone = response.data.phone;
                     $scope.currentUserEmail = response.data.email;
-                    $scope.currentUserClubs = response.data.clubs;
+                    
+                    angular.forEach(response.data.clubs, function(clubId) {
+                        bAdminAPI.getClub(clubId).then(
+                            function(response) {
+                                $scope.currentUserClubs.push(response.data);
+                            },
+                            function(error) {
+                                $log.debug("Error response from API call:");
+                                $log.debug(error);
+                            });
+                        
+                    });
 
                     $rootScope.currentUserName = $scope.currentUserName;
                 }, 
@@ -166,7 +177,7 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
     })();
 }]);
 
-myApp.controller('clubController', ['$scope', '$log', '$location', 'gatekeeper', 'bAdminAPI', function($scope, $log, $location, gatekeeper, bAdminAPI) {
+myApp.controller('findClubController', ['$scope', '$log', '$location', 'gatekeeper', 'bAdminAPI', function($scope, $log, $location, gatekeeper, bAdminAPI) {
     $scope.listOfClubs;
     $scope.searchText = "";
 
