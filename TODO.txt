@@ -1,22 +1,27 @@
-index:
+TODO:
 - opret træning repeat
 - opret tærning er i GMT (server side) skal være lokal
 - index træningspas liste skal bruge træningspas navn
+- eksisterende træninger liste
 - klub admin: rediger eksisterende træninger
-- inviter spillere til træning
-- bruger klub admin accepter spiller 
-- lav opret klub side
-- get /bruger/<id> => 404: opret bruger, go igen
+
 - find klub side skal ikke have 'bliv medlem' hvis spiller allerede er medlem
 
-TODO:
+- inviter spillere til træning
+- admin klub medlem: vis+accepter anmodning, fjern spiller
+- admin klun medlem: gør til træner, gør til admin
+
+- lav opret/rediger klub side
+- klub auto accepter alle nye spillere
+
+- get /bruger/<id> => 404: opret bruger, go igen
+
 - center navbar text
+
 - wrap API in oauth auth (se svar 2 her http://stackoverflow.com/questions/5406859/facebook-access-token-server-side-validation-for-iphone-app og https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow#checktoken)
-- https
-- opdater bruger
-- slet bruger, klub
-- bruger opret: valider email
-- bruger opret: valider tlf
+
+- bruger opret: valider email, valider tlf
+
 - testcases: getuser bad id
 - testcases: træningspas
 - testcases: alle brug af input->datetimes, tjek for input er string og længde. også dateutil.parse
@@ -24,27 +29,28 @@ TODO:
 - testcases: GET bruger/id/træningspas incl bad id
 - testcases: alle parsing af int i urls/params til ints (alle steder hvor int(bla) er kaldt (int(bla) kaste ValueException, og det er kodet som om det bare retunere false))
 - testcases: GET klub træningspas
-- mongodb
+
 - custom errors API?
 - bedre errors in controllers
 - controllers fjern debug logging / lav så debug mode kan sættes
-- Træningstrupper: opret/rediger, placer medlem på træningstrup, inviter træningstrup (mange medlemmer) ved opret træning
 
-- GMail login
-- en klub skal kunne modtage og håndtere spiller medlem anmodninger
-- en klub skal kunne udmelde spillere af klubben
-- en klub burde kunne sætte "auto accepter alle spillere"
-- en klub skal kunne promote en bruger til admins og til træner. bruger skal være medlem af klub
-- bruger rettigheder: skal bruger X kunne kalder /practices eller /users og få listet alle træningsplan/brugere?
 - konsistenstjek datatyper docs in bAdmin_main.py
 
 - drift setup
 - about page
+- Demo data
 
 
 - Hvis en bruger slettes imens en klient har hentet fx en klub med liste af spiller hvor den slettede spiller er i, kan denne klient ikke POST/PUT da alle spillere nu ikke eksisterer. Klienten har ingen nem måde at tjekke på
 
-
+Feature ønsker:
+- Træningstrupper: opret/rediger, placer medlem på træningstrup, inviter træningstrup (mange medlemmer) ved opret træning
+- Bruger rediger side / slet Bruger (?)
+- Slet Klub (?) 
+- Database / ikke in-memory DB
+- HTTPS
+- Bruger rettigheder: skal bruger X kunne kalder /practices eller /users og få listet alle træningsplan/brugere?
+- GMail loging
 
 Før deploy:
 - ikke debug mode Flash
