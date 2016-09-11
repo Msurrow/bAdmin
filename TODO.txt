@@ -40,7 +40,7 @@ TODO:
 - about page
 - Demo data
 
-
+Kendte fejl:
 - Hvis en bruger slettes imens en klient har hentet fx en klub med liste af spiller hvor den slettede spiller er i, kan denne klient ikke POST/PUT da alle spillere nu ikke eksisterer. Klienten har ingen nem måde at tjekke på
 
 Feature ønsker:
