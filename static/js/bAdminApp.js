@@ -347,7 +347,6 @@ myApp.controller('adminClubController', ['$scope', '$log', 'gatekeeper', '$locat
     $scope.currentClubPractices = [];
 
     //New practice vars
-    $scope.form = {}
     $scope.newPracticeName = "";
     $scope.newPracticeDate = "";
     $scope.newPracticeStartHour = "";

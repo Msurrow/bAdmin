@@ -1,5 +1,5 @@
 index:
-- on submit valider input
+- opret træning repeat
 - opret tærning er i GMT (server side) skal være lokal
 - index træningspas liste skal bruge træningspas navn
 - klub admin: rediger eksisterende træninger
@@ -19,7 +19,7 @@ TODO:
 - bruger opret: valider tlf
 - testcases: getuser bad id
 - testcases: træningspas
-- testcases: alle brug af input->datetimes, tjek for input er string. også dateutil.parse
+- testcases: alle brug af input->datetimes, tjek for input er string og længde. også dateutil.parse
 - testcases: alle isinstance(jsoninput, int) but være try/catch valueerror med int() + test 
 - testcases: GET bruger/id/træningspas incl bad id
 - testcases: alle parsing af int i urls/params til ints (alle steder hvor int(bla) er kaldt (int(bla) kaste ValueException, og det er kodet som om det bare retunere false))
