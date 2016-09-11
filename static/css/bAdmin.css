@@ -44,6 +44,15 @@
     color: grey;    
 }
 
+.tilmeld-traening-btn {
+    margin-left: 10px;
+    font-size: x-small;
+    width: 100px;
+    height: 20px;
+    padding-top: 0px;
+    padding-left: 5px;  
+}
+
 #loginbox {
     width:50%;
     margin:auto;

@@ -24,6 +24,15 @@ bAdminAPIService.factory('bAdminAPI', ['$log', '$http', 'gatekeeper', function($
         });
     }
 
+    bAdminAPIFactory.getUserPractices = function(id) {
+        return $http.get(baseUrl+"brugere/" + id + "/traeningspas", {
+            params: {
+                "userID": gatekeeper.userId,
+                "userAccessToken": gatekeeper.userAccessToken
+            }
+        });
+    }
+
     bAdminAPIFactory.getClubs = function() {
         return $http.get(baseUrl+"klubber", {
             params: {
@@ -55,6 +64,68 @@ bAdminAPIService.factory('bAdminAPI', ['$log', '$http', 'gatekeeper', function($
                 "userAccessToken": gatekeeper.userAccessToken
             });        
     }
+
+    bAdminAPIFactory.confirmPractice = function(practiceObj) {
+        // Move user from invited list to confirmed list
+        var confirmed = practiceObj.confirmed;
+        var rejected = practiceObj.rejected;
+        var invited = practiceObj.invited;
+        // Since currentUserPracties is invited+confirmed+rejected the user will
+        // be in either invited (no selection yet) or rejected (rejected pressed 
+        // at some earlier point). 
+        var idx = invited.indexOf(parseInt(gatekeeper.userId));
+        if (idx > -1) {
+            confirmed.push(invited[idx]);
+            invited.splice(idx, 1);
+        } else {
+            idx = rejected.indexOf(parseInt(gatekeeper.userId));
+            confirmed.push(rejected[idx]);   
+            rejected.splice(idx, 1);
+        }
+        
+        // Send PUT request
+        return $http.put(baseUrl+"traeningspas/"+practiceObj.id,
+            {
+                // If we don't send properties they will default to the existing
+                // thus we only send updates.
+                "confirmed": confirmed,
+                "rejected": rejected,
+                "invited": invited,
+                "userID": gatekeeper.userId,
+                "userAccessToken": gatekeeper.userAccessToken
+            });
+    }
+
+    bAdminAPIFactory.rejectPractice = function(practiceObj) {
+        // Move user from rejected list to rejected list
+        var confirmed = practiceObj.confirmed;
+        var rejected = practiceObj.rejected;
+        var invited = practiceObj.invited;
+        // Since currentUserPracties is invited+confirmed+rejected the user will
+        // be in either invited (no selection yet) or confirmed (confirmed pressed 
+        // at some earlier point). 
+        var idx = invited.indexOf(parseInt(gatekeeper.userId));
+        if (idx > -1) {
+            rejected.push(invited[idx]);
+            invited.splice(idx, 1);
+        } else {
+            idx = confirmed.indexOf(parseInt(gatekeeper.userId));
+            rejected.push(confirmed[idx]);   
+            confirmed.splice(idx, 1);
+        }
+
+        // Send PUT request
+        return $http.put(baseUrl+"traeningspas/"+practiceObj.id,
+            {
+                // If we don't send properties they will default to the existing
+                // thus we only send updates.
+                "confirmed": confirmed,
+                "rejected": rejected,
+                "invited": invited,
+                "userID": gatekeeper.userId,
+                "userAccessToken": gatekeeper.userAccessToken
+            });
+    }    
 
     return bAdminAPIFactory;
 }]);

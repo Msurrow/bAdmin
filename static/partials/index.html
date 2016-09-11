@@ -6,10 +6,27 @@
         <a class="btn btn-primary" href="#/createClub">Opret ny klub</a>
     </div>
 
+
+
     <div id="index-with-clubs" ng-show="currentUserClubs.length > 0">
-        <table id="index-club-list">
-            <tr ng-repeat="club in currentUserClubs">{{club}}</tr>
-        </table>
+        <h2>Hi {{currentUserName}}</h2>
+        <p ng-show="currentUserClubsAsCoachOrAdmin.length == 0">Du er medlem af {{currentUserClubs.length}} klubber.</p>
+        <p ng-show="currentUserClubsAsCoachOrAdmin.length == 1">Du er medlem af {{currentUserClubs.length}} klubber, og kan administrere {{currentUserClubsAsCoachOrAdmin.length}} klub.</p>
+        <p ng-show="currentUserClubsAsCoachOrAdmin.length > 1">Du er medlem af {{currentUserClubs.length}} klubber, og kan administrere {{currentUserClubsAsCoachOrAdmin.length}} klubber.</p>
+        <br>
+
+        <div id="index-club-list" ng-repeat="club in currentUserClubs">
+            <p class="lead">Træningspas i {{club.name}}</p>
+            <div ng-repeat="practice in currentUserPractices | filter: {club: club.id}">
+                <p> Træning {{formatDate(practice.startTime)}} ({{practice.durationMinutes}} minutter)</p>
+                
+                <button ng-class="{'btn': true, 'tilmeld-traening-btn': true, 'btn-default': !practiceSelectionIsConfirmed(practice), 'btn-success': practiceSelectionIsConfirmed(practice)}" ng-click="confirmPractice(practice)">Jeg kommer!</button>
+                
+                <button ng-class="{'btn': true, 'tilmeld-traening-btn': true, 'btn-default': !practiceSelectionIsRejected(practice), 'btn-danger': practiceSelectionIsRejected(practice)}" ng-click="rejectPractice(practice)">Jeg kommer ikke!</button>
+            <div>
+
+
+        </div>
     </div>
 
 </div>

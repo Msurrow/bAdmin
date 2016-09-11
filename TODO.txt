@@ -1,18 +1,14 @@
 index:
-
-- hvis klubber == 0: vis "find klub | opret klub"
 - hvis klubber > 0: get /bruger/<id>/traeningspas, vis liste traeningspas
 - for hver traeningspas: vise "kommer | kommer ikke" knap
 - for hver traeningspas: klik ind på detaljer
-- get /bruger/<id> => 404: opret bruger, go igen
-- hvis klubber > 0: views/knapper "mine klubber", "opret ny klub"
-- bruger apply membership ved klub
+- hvis adminOrCoach klub > 0 vist admin del
+- vis knap "opret ny klub" ved index-with-clubs
 - bruger klub admin accepter spiller 
-- bruger opret klub
-
+- lav opret klub side
+- get /bruger/<id> => 404: opret bruger, go igen
 
 TODO:
-- angular
 - center navbar text
 - wrap API in oauth auth (se svar 2 her http://stackoverflow.com/questions/5406859/facebook-access-token-server-side-validation-for-iphone-app og https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow#checktoken)
 - https
@@ -20,19 +16,22 @@ TODO:
 - slet bruger, klub
 - bruger opret: valider email
 - bruger opret: valider tlf
+- testcases: getuser bad id
 - testcases: træningspas
+- testcases: GET bruger/id/træningspas incl bad id
+- testcases: alle parsing af int i urls/params til ints (alle steder hvor int(bla) er kaldt (int(bla) kaste ValueException, og det er kodet som om det bare retunere false))
 - mongodb
 - custom errors?
 - GMail login
-- Lav "Logget ind som xxx" i navbar
 - en klub skal kunne modtage og håndtere spiller medlem anmodninger
+- en klub skal kunne udmelde spillere af klubben
 - en klub burde kunne sætte "auto accepter alle spillere"
-- en klub skal kunne promote en bruger til admins og til træner
+- en klub skal kunne promote en bruger til admins og til træner. bruger skal være medlem af klub
+- bruger rettigheder: skal bruger X kunne kalder /practices eller /users og få listet alle træningsplan/brugere?
+- konsistenstjek datatyper docs in bAdmin_main.py
 
 - drift setup
 - about page
-
-- findClub: 'bliv medlem' skal ikke vises ved klubber, som brugeren allerede er medlem af
 
 
 - Hvis en bruger slettes imens en klient har hentet fx en klub med liste af spiller hvor den slettede spiller er i, kan denne klient ikke POST/PUT da spillerene nu ikke eksisterer. Klienten har ingen nem måde at tjekke på

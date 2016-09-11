@@ -133,9 +133,11 @@ myApp.controller('ngviewController', ['$scope', '$log', function($scope, $log) {
 myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location', 'gatekeeper', 'bAdminAPI', function($rootScope, $scope, $log, $location, gatekeeper, bAdminAPI) {
     $scope.currentUserId; //id: <int>, not null
     $scope.currentUserName; //name: <string>, not null
-    $scope.currentUserClubs = []; //clubs: <list:int>, int must be id of existing Klub
+    $scope.currentUserClubs = []; //clubs: <list:Club object>
     $scope.currentUserEmail; //email: <string>, valid email
     $scope.currentUserPhone; //phone: <int:8>, 8-digits valid DK phonenumber
+    $scope.currentUserClubsAsCoachOrAdmin = []; //clubs where user is admin or coach: <list:int>, int must be existing club ID and club will exist in currentUserClubs
+    $scope.currentUserPractices = []; //practices the user is invited for (and confirmed, rejected): <list: practices object>
 
     //Init the controller
     (function(){
@@ -146,7 +148,7 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
         } else {
             bAdminAPI.getUser(gatekeeper.userId).then(
                 function(response) {
-                    $log.debug("Response from API call:");
+                    $log.debug("Get USER: Response from API call:");
                     $log.debug(response.data);
 
                     $scope.currentUserId = response.data.id;
@@ -154,10 +156,20 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
                     $scope.currentUserPhone = response.data.phone;
                     $scope.currentUserEmail = response.data.email;
                     
+                    //Resolve all user clubs
                     angular.forEach(response.data.clubs, function(clubId) {
                         bAdminAPI.getClub(clubId).then(
                             function(response) {
                                 $scope.currentUserClubs.push(response.data);
+
+                                if (response.data.admins.indexOf($scope.currentUserId) > -1) {
+                                    $scope.currentUserClubsAsCoachOrAdmin.push(response.data.id);
+                                } else if (response.data.coaches.indexOf($scope.currentUserId) > -1) {
+                                    //A person can be both admin and coach in the same club
+                                    //and we do not want the same club added twice. Thus we only 
+                                    //check if person is coach if he is not already admin.
+                                    $scope.currentUserClubsAsCoachOrAdmin.push(response.data.id);
+                                }
                             },
                             function(error) {
                                 $log.debug("Error response from API call:");
@@ -165,6 +177,16 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
                             });
                         
                     });
+
+                    //Get currentUser practices
+                    bAdminAPI.getUserPractices($scope.currentUserId).then(
+                            function(response) {
+                                $scope.currentUserPractices = response.data;
+                            },
+                            function(error) {
+                                $log.debug("Error response from API call:");
+                                $log.debug(error);
+                            });
 
                     $rootScope.currentUserName = $scope.currentUserName;
                 }, 
@@ -175,6 +197,68 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
             );
         }
     })();
+
+    $scope.formatDate = function(date) {
+        moment.locale("da");
+        return moment(date).format("dddd H[:]mm, D MMM Y");
+    }
+
+    var updatePractices = function() {
+                            bAdminAPI.getUserPractices($scope.currentUserId).then(
+                                function(response) {
+                                    $scope.currentUserPractices = response.data;
+                                },
+                                function(error) {
+                                    $log.debug("Error response from API call:");
+                                    $log.debug(error);
+                                });  
+                        } 
+
+    $scope.confirmPractice = function(practice) {
+        // Check if the user pressed the confirm button again, ignore if so
+        if($scope.practiceSelectionIsConfirmed(practice)) {
+            return;
+        }
+
+        bAdminAPI.confirmPractice(practice).then(
+            function(response) {
+                $log.debug("Response from API call:");
+                $log.debug(response.data);
+                updatePractices();
+            },
+            function(error) {
+                $log.debug("Error response from API call:");
+                $log.debug(error);                
+            });
+    };  
+
+    $scope.rejectPractice = function(practice) {
+        // Check if the user pressed the reject button again, ignore if so
+        if($scope.practiceSelectionIsRejected(practice)) {
+            return;
+        }
+
+        bAdminAPI.rejectPractice(practice).then(
+            function(response) {
+                $log.debug("Response from API call:");
+                $log.debug(response.data);
+                updatePractices();
+            },
+            function(error) {
+                $log.debug("Error response from API call:");
+                $log.debug(error);                
+            });;
+    }
+
+    $scope.practiceSelectionIsConfirmed = function(practice) {
+        var idx = $scope.currentUserPractices.indexOf(practice);        
+        return $scope.currentUserPractices[idx].confirmed.indexOf($scope.currentUserId) > -1;
+    }
+
+    $scope.practiceSelectionIsRejected = function(practice) {
+        var idx = $scope.currentUserPractices.indexOf(practice);        
+        return $scope.currentUserPractices[idx].rejected.indexOf($scope.currentUserId) > -1;
+    }
 }]);
 
 myApp.controller('findClubController', ['$scope', '$log', '$location', 'gatekeeper', 'bAdminAPI', function($scope, $log, $location, gatekeeper, bAdminAPI) {

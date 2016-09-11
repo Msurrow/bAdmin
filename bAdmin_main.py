@@ -5,9 +5,11 @@ from datetime import datetime
 app = Flask(__name__)
 CORS(app)
 
+
 database = {"brugere": [{"id": 0, "name": "Anton", "clubs": [], "email": "", "phone": 12345678}, {"id": 1, "name": "Huggo", "clubs": [], "email": "", "phone": 12345678}, {"id": 2, "name": "Træner Kvinde", "clubs": [0, 1], "email": "", "phone": 12345678}, {"id": 3, "name": "Træner Mand", "clubs": [0], "email": "", "phone": 12345678}, {"id": 905226362922379, "name": "Mark Surrow", "clubs": [0,1], "email": "msurrow@gmail.com", "phone": 60131201}], 
             "klubber": [{"id": 0, "name": "FooKlub", "admins": [], "coaches": [], "membershipRequests": []}, {"id": 1, "name": "BarKlub", "admins": [905226362922379], "coaches": [905226362922379], "membershipRequests": []}],
-            "traeningspas": [{"id": 0, "club": 0, "startTime": datetime(2016, 12, 24, 18, 00, 00), "durationMinutes": 120, "invited": [0, 1], "confirmed": [0]}]}
+            "traeningspas": [{"id": 0, "club": 0, "startTime": datetime(2016, 12, 24, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}, {"id": 1, "club": 1, "startTime": datetime(2016, 12, 24, 19, 30, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}]}
+
 
 @app.route("/")
 def index():
@@ -57,9 +59,13 @@ def user(userId):
     return jsonify(bruger[0])
 
 @app.route("/brugere/<int:userId>/traeningspas", methods=['GET'])
-def userTraeningspas(userId):
-    # TODO: Test cases
-    return jsonify({})
+def userPractices(userId):
+    print("Auth dummy: ", request.args.get('userID'), ", ", request.args.get('userAccessToken'))
+
+    if not userId or not isinstance(int(userId), int):
+        abort(404)
+
+    return jsonify([tp for tp in database["traeningspas"] if userId in tp["invited"] or userId in tp["confirmed"] or userId in tp["rejected"]]);
 
 """
 Klubber
@@ -112,6 +118,8 @@ def club(clubId):
         if not request.json:
             abort(400)
 
+        # Default all values to existing values such that missing values
+        # in PUT doesn't result in blank fields.
         newName = klub[0]['name']
         newAdmins = klub[0]['admins']
         newCoaches = klub[0]['coaches']
@@ -171,8 +179,9 @@ Træningspas datatype:
     club: <int>, not null club must be id of existing club
     startTime: <datetime>, not null
     durationMinutes: <int>, int must be >0
-    invited: <list:int>, ints must be id of existing Spiller
-    confirmed: <list:int>, ints must be id of existing Spiller
+    invited: <list:int>, ints must be id of existing user
+    confirmed: <list:int>, ints must be id of existing user
+    rejected: <list:ing>, ints must be id of existing user
 }
 """
 @app.route("/traeningspas", methods=['GET', 'POST'])
@@ -205,13 +214,18 @@ def practices():
         if 'confirmed' not in request.json or not doesAllUsersInListExist(request.json['confirmed']):
             abort(400)
 
-        # A practice is created without confirmed invitees
+        # Check rejected players are existing users
+        if 'rejected' not in request.json or not doesAllUsersInListExist(request.json['rejected']):
+            abort(400)
+
+        # A practice is created without confirmed or rejected invitees
         traeningspas = {"id": database["traeningspas"][-1]["id"]+1,
                         "club": request.json['club'],
                         "startTime": datetime(request.json['startTime']),
                         "durationMinutes": request.json['durationMinutes'],
                         "invited": request.json['invited'],
-                        "confirmed": []}
+                        "confirmed": [],
+                        "rejected": []}
 
         database["traeningspas"].append(traeningspas)
 
@@ -222,8 +236,9 @@ def practices():
 
 @app.route("/traeningspas/<int:practiceId>", methods=['GET', 'PUT'])
 def practice(practiceId):
+    print(request.json)
     # Does the træningspas exist?
-    traeningspas = [traeningspas for traeningspas in database['træningspas'] if traeningspas['id'] == practiceId]
+    traeningspas = [traeningspas for traeningspas in database['traeningspas'] if traeningspas['id'] == practiceId]
     if len(traeningspas) == 0:
         abort(404)
 
@@ -232,11 +247,17 @@ def practice(practiceId):
             abort(400)
         # Design decision: cannot updated clubId.
 
+        newStartTime = traeningspas[0]['startTime']
+        newDurationMinutes = traeningspas[0]['durationMinutes']
+        newInvited = traeningspas[0]['invited']
+        newConfirmed = traeningspas[0]['confirmed']
+        newRejected = traeningspas[0]['rejected']
+
         # Are we updating start time? If so, validate and update
         if 'startTime' in request.json:
             # Start time must be a valid date
             if datetime(request.json['startTime']):
-                traeningspas[0]['startTime'] = datetime(request.json['startTime'])
+                newStartTime = datetime(request.json['startTime'])
             else:
                 abort(400)
 
@@ -244,7 +265,7 @@ def practice(practiceId):
         if 'durationMinutes' in request.json:
             # A duration must be >0 minutes
             if isinstance(request.json['durationMinutes'], int) and request.json['durationMinutes'] <= 0:
-                traeningspas[0]['durationMinutes'] = request.json['durationMinutes']
+                newDurationMinutes = request.json['durationMinutes']
             else:
                 abort(400)
 
@@ -253,7 +274,7 @@ def practice(practiceId):
         if 'invited' in request.json:
             # Check all players in list are users
             if isinstance(request.json['invited'], list) and doesAllUsersInListExist(request.json['invited']):
-                traeningspas[0]['invited'] = request.json['invited']
+                newInvited = request.json['invited']
             else:
                 abort(400)
 
@@ -262,9 +283,24 @@ def practice(practiceId):
         if 'confirmed' in request.json:
             # Check all confirmed players are actual users
             if isinstance(request.json['confirmed'], list) and doesAllUsersInListExist(request.json['confirmed']):
-                traeningspas[0]['confirmed'] = request.json['confirmed']
+                newConfirmed = request.json['confirmed']
             else:
                 abort(400)
+
+        # Are we updating rejected players list? If so, validate and update.
+        # Overwrite existing with input
+        if 'rejected' in request.json:
+            # Check all confirmed players are actual users
+            if isinstance(request.json['rejected'], list) and doesAllUsersInListExist(request.json['rejected']):
+                newRejected = request.json['rejected']
+            else:
+                abort(400)
+
+        traeningspas[0]['startTime'] = newStartTime
+        traeningspas[0]['durationMinutes'] = newDurationMinutes
+        traeningspas[0]['invited'] = newInvited
+        traeningspas[0]['confirmed'] = newConfirmed
+        traeningspas[0]['rejected'] = newRejected
 
         return jsonify(traeningspas[0])
     # GET
