@@ -51,6 +51,15 @@ bAdminAPIService.factory('bAdminAPI', ['$log', '$http', 'gatekeeper', function($
         });        
     }
 
+    bAdminAPIFactory.getClubPractices = function(id) {
+        return $http.get(baseUrl + "clubs/" + id + "/traeningspas", {
+            params: {
+                "userID": gatekeeper.userId,
+                "userAccessToken": gatekeeper.userAccessToken
+            }
+        });
+    }
+
     bAdminAPIFactory.applyForMembership = function(clubObj) {
         var mreqs = clubObj.membershipRequests.slice();
         mreqs.push(gatekeeper.userId);
@@ -126,6 +135,26 @@ bAdminAPIService.factory('bAdminAPI', ['$log', '$http', 'gatekeeper', function($
                 "userAccessToken": gatekeeper.userAccessToken
             });
     }    
+
+    bAdminAPIFactory.saveNewPractice = function(clubId, newPracticeName, newPracticeDate, newPracticeStartHour, newPracticeStartMinute, newPracticeDuration, newPracticeRepeats) {
+        var clubId = clubId;
+        //If name is left empty just use a default
+        var practiceName = newPracticeName === "" ? "Træningspas" : newPracticeName;
+        //Parse dato into ISO8601 YYYY-MM-DD HH:MM. Asumes datepicker format option is set correctly
+        var practiceStartTime = newPracticeDate + " " + newPracticeStartHour + ":" + newPracticeStartMinute;
+        var practiceDuration = newPracticeDuration;
+        //We include repeats param and let the backend handle it, to avoid multiple requests
+        var practiceRepeats = newPracticeRepeats;
+
+        return $http.post(baseUrl+"traeningspas", 
+            {
+                "club": clubId,
+                "name": practiceName,
+                "startTime": practiceStartTime,
+                "durationMinutes": practiceDuration,
+                "invited": []
+            });
+    }
 
     return bAdminAPIFactory;
 }]);

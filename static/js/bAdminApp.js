@@ -26,7 +26,10 @@ myApp.config(['$routeProvider', '$logProvider',
             }).
             when('/createClub', {
                 templateUrl: '/static/partials/createClub.html',
-            }).            
+            }).
+            when('/adminClub/:clubId', {
+                templateUrl: '/static/partials/adminClub.html',
+            }).
             otherwise({
                 redirectTo: '/'
             });
@@ -163,19 +166,18 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
                                 $scope.currentUserClubs.push(response.data);
 
                                 if (response.data.admins.indexOf($scope.currentUserId) > -1) {
-                                    $scope.currentUserClubsAsCoachOrAdmin.push(response.data.id);
+                                    $scope.currentUserClubsAsCoachOrAdmin.push(response.data);
                                 } else if (response.data.coaches.indexOf($scope.currentUserId) > -1) {
                                     //A person can be both admin and coach in the same club
                                     //and we do not want the same club added twice. Thus we only 
                                     //check if person is coach if he is not already admin.
-                                    $scope.currentUserClubsAsCoachOrAdmin.push(response.data.id);
+                                    $scope.currentUserClubsAsCoachOrAdmin.push(response.data);
                                 }
                             },
                             function(error) {
                                 $log.debug("Error response from API call:");
                                 $log.debug(error);
-                            });
-                        
+                            });                        
                     });
 
                     //Get currentUser practices
@@ -259,6 +261,14 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
         var idx = $scope.currentUserPractices.indexOf(practice);        
         return $scope.currentUserPractices[idx].rejected.indexOf($scope.currentUserId) > -1;
     }
+
+    $scope.isCoachOrAdmin = function(club) {
+        if ($scope.currentUserClubsAsCoachOrAdmin.indexOf(club) > -1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }]);
 
 myApp.controller('findClubController', ['$scope', '$log', '$location', 'gatekeeper', 'bAdminAPI', function($scope, $log, $location, gatekeeper, bAdminAPI) {
@@ -327,3 +337,89 @@ myApp.controller('aboutController', ['$log', 'gatekeeper', '$location', function
         }
     })();
 }]);
+
+myApp.controller('adminClubController', ['$scope', '$log', 'gatekeeper', '$location', '$routeParams', 'bAdminAPI', function($scope, $log, gatekeeper, $location, $routeParams, bAdminAPI) {
+    $scope.currentClubId = -1;
+    $scope.currentClub;
+    $scope.showPractices = true;
+    $scope.showPlayers = false;
+    $scope.showEditClub = false;
+    $scope.currentClubPractices = [];
+
+    //New practice vars
+    $scope.form = {}
+    $scope.newPracticeName = "";
+    $scope.newPracticeDate = "";
+    $scope.newPracticeStartHour = "";
+    $scope.newPracticeStartMinute = "";
+    $scope.newPracticeDuration = "";
+    $scope.newPracticeRepeats = "";
+
+    //Init the controller   
+    (function(){
+        $log.debug("adminClub init");
+        if(!gatekeeper.loggedIn) {
+            $log.debug("user not logged in, redirecting to /login");
+            $location.path("/login");
+        }
+
+        //Load club        
+        $scope.currentClubId = $routeParams.clubId;
+        bAdminAPI.getClub($scope.currentClubId).then(
+            function(response) {
+                $scope.currentClub = response.data;
+
+                //Load practices
+                bAdminAPI.getClubPractices($scope.currentClubId).then(
+                    function(response) {
+                        $scope.currentClubPractices = response.data;
+                    },
+                    function(error) {
+                        $log.debug("Error response from API call:");
+                        $log.debug(error);  
+                    });
+            }, 
+            function(error) {
+                $log.debug("Error response from API call:");
+                $log.debug(error);    
+            });
+    })();
+
+    $scope.showPracticesFn = function() { $scope.showPractices = true; $scope.showPlayers = false; $scope.showEditClub = false; }
+    $scope.showPlayersFn = function() { $scope.showPractices = false; $scope.showPlayers = true; $scope.showEditClub = false; }
+    $scope.showEditClubFn = function() { $scope.showPractices = false; $scope.showPlayers = false; $scope.showEditClub = true; }
+
+    $scope.submitNewPractice = function() {
+        bAdminAPI.saveNewPractice($scope.currentClubId, $scope.newPracticeName, $scope.newPracticeDate, $scope.newPracticeStartHour, $scope.newPracticeStartMinute, $scope.newPracticeDuration, $scope.newPracticeRepeats).then(
+            function(response) {
+                //Update practices
+                bAdminAPI.getClubPractices($scope.currentClubId).then(
+                    function(response) {
+                        $scope.currentClubPractices = response.data;
+                    },
+                    function(error) {
+                        $log.debug("Error response from API call:");
+                        $log.debug(error);
+                    });
+            }, 
+            function(error) {
+                $log.debug("Error response from API call:");
+                $log.debug(error); 
+            }
+        );
+
+        $scope.newPracticeName = "";
+        $scope.newPracticeDate = "";
+        $scope.newPracticeStartHour = "";
+        $scope.newPracticeStartMinute = "";
+        $scope.newPracticeDuration = "";
+        $scope.newPracticeRepeats = "";
+    }
+
+    $scope.formatDate = function(date) {
+        moment.locale("da");
+        return moment(date).format("dddd H[:]mm, D MMM Y");
+    }
+}]);
+
+

@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, abort, make_response, send_file
 from flask.ext.cors import CORS
 from datetime import datetime
+import dateutil.parser
 
 app = Flask(__name__)
 CORS(app)
@@ -8,7 +9,7 @@ CORS(app)
 
 database = {"brugere": [{"id": 0, "name": "Anton", "clubs": [], "email": "", "phone": 12345678}, {"id": 1, "name": "Huggo", "clubs": [], "email": "", "phone": 12345678}, {"id": 2, "name": "Træner Kvinde", "clubs": [0, 1], "email": "", "phone": 12345678}, {"id": 3, "name": "Træner Mand", "clubs": [0], "email": "", "phone": 12345678}, {"id": 905226362922379, "name": "Mark Surrow", "clubs": [0,1], "email": "msurrow@gmail.com", "phone": 60131201}], 
             "klubber": [{"id": 0, "name": "FooKlub", "admins": [], "coaches": [], "membershipRequests": []}, {"id": 1, "name": "BarKlub", "admins": [905226362922379], "coaches": [905226362922379], "membershipRequests": []}],
-            "traeningspas": [{"id": 0, "club": 0, "startTime": datetime(2016, 12, 24, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}, {"id": 1, "club": 0, "startTime": datetime(2016, 12, 31, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}, {"id": 2, "club": 1, "startTime": datetime(2016, 12, 24, 19, 30, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}]}
+            "traeningspas": [{"id": 0, "name": "A-træning", "club": 0, "startTime": datetime(2016, 12, 24, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}, {"id": 1, "name": "B-træning", "club": 0, "startTime": datetime(2016, 12, 31, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}, {"id": 2, "name": "A-træning", "club": 1, "startTime": datetime(2016, 12, 24, 19, 30, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}]}
 
 
 @app.route("/")
@@ -170,6 +171,14 @@ def club(clubId):
     # GET
     else:
         return jsonify(klub[0])
+@app.route("/clubs/<int:clubId>/traeningspas", methods=['GET'])
+def clubPractices(clubId):
+    print("Auth dummy: ", request.args.get('userID'), ", ", request.args.get('userAccessToken'))
+
+    if not clubId or not isinstance(int(clubId), int):
+        abort(404)
+
+    return jsonify([tp for tp in database["traeningspas"] if clubId is tp["club"]]);
 
 """
 Træningspas
@@ -192,38 +201,45 @@ def practices():
 
         # Validate club exists and starttime is valid
         if 'club' in request.json:
-            klub = [klub for klub in database['klubber'] if klub['id'] == request.json['club']]
+            try:
+                klub = [klub for klub in database['klubber'] if klub['id'] == int(request.json['club'])]
+            except ValueError:
+                abort(400)
             if len(klub) == 0:
-                abort(404)
+                abort(400)
         else:
             abort(400)
 
+        # Check practice bame exists and is valid
+        if 'name' not in request.json or not isinstance(request.json['name'], str):
+            abort(400)
+
         # Check startTime exists and is valid
-        if 'startTime' not in request.json or not datetime(request.json['startTime']):
+        if 'startTime' not in request.json or not dateutil.parser.parse(request.json['startTime']):
             abort(400)
 
         # Check durationMinutes exists and is valid
-        if 'durationMinutes' not in request.json or not isinstance(request.json['durationMinutes'], int) or request.json['durationMinutes'] <= 0:
+        if 'durationMinutes' in request.json:
+            try:
+                if int(request.json['durationMinutes']) <= 0:
+                    abort(400)
+            except ValueError:
+                abort(400)
+        else:
             abort(400)
 
         # Check invited players are existing users
         if 'invited' not in request.json or not isinstance(request.json['invited'], list) or not doesAllUsersInListExist(request.json['invited']):
             abort(400)
 
-        # Check confirmed players are existing users
-        if 'confirmed' not in request.json or not doesAllUsersInListExist(request.json['confirmed']):
-            abort(400)
-
-        # Check rejected players are existing users
-        if 'rejected' not in request.json or not doesAllUsersInListExist(request.json['rejected']):
-            abort(400)
-
         # A practice is created without confirmed or rejected invitees
         traeningspas = {"id": database["traeningspas"][-1]["id"]+1,
-                        "club": request.json['club'],
-                        "startTime": datetime(request.json['startTime']),
+                        "name": request.json['name'],
+                        "club": int(request.json['club']),
+                        "startTime": dateutil.parser.parse(request.json['startTime']),
                         "durationMinutes": request.json['durationMinutes'],
-                        "invited": request.json['invited'],
+                        #"invited": request.json['invited'],
+                        "invited": [905226362922379],
                         "confirmed": [],
                         "rejected": []}
 

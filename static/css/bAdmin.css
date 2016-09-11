@@ -1,3 +1,4 @@
+/* Site globat */
 #partial-content-container {
     padding-top: 100px;
 }
@@ -11,6 +12,14 @@
     margin-bottom: 0px;
 }
 
+/* Login partial/menus/button */
+#loginbox {
+    width:50%;
+    margin:auto;
+    text-align: center;
+}
+
+/* Index when user is not member of any clubs */
 #index-no-clubs {
     width:70%;
     margin:auto;
@@ -28,6 +37,34 @@
     padding-top: 15px;
 }
 
+/* Index when user is member of > 0 clubs */
+#index-with-clubs-greeting {
+    margin-bottom: 50px;
+}
+
+.tilmeld-traening-btn {
+    margin-left: 10px;
+    font-size: x-small;
+    width: 100px;
+    height: 20px;
+    padding-top: 0px;
+    padding-left: 5px;  
+    float: left;
+}
+#p-tilmeld-traening {
+    clear: left;
+    color: grey;
+}
+#club-can-admin-text {
+    font-size: 8pt;
+}
+
+.a-right-floaty {
+    float: right;
+    margin-right: 10px; 
+}
+
+/* Find club partial */
 #find-club-container>ul {
     list-style-type: none;
     font-size: large;
@@ -50,22 +87,31 @@
     color: grey;    
 }
 
-.tilmeld-traening-btn {
-    margin-left: 10px;
-    font-size: x-small;
-    width: 100px;
-    height: 20px;
-    padding-top: 0px;
-    padding-left: 5px;  
-    float: left;
-}
-#p-tilmeld-traening {
-    clear: left;
-    color: grey;
+/* Admin club partial */
+.admin-club-part {
+    margin-bottom: 50px;
+    padding-left: 0px;
 }
 
-#loginbox {
-    width:50%;
-    margin:auto;
-    text-align: center;
+#admin-club-create-practices {
+    padding-left: 0px;
+}
+
+.practiceStartTime {
+    width: 110px;
+    float: left;
+}
+
+#practiceStartTimeSeperator {
+    padding-left: 3px;
+    padding-right: 3px; 
+    padding-top: 5px;   
+}
+#practiceStartTimeText {
+    white-space: normal;
+    clear:left;
+    padding-bottom: 10px;
+}
+#practiceRepeat {
+    float: left;
 }
