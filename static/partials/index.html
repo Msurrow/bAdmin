@@ -17,15 +17,16 @@
 
         <div id="index-club-list" ng-repeat="club in currentUserClubs">
             <p class="lead">Træningspas i {{club.name}}</p>
-            <div ng-repeat="practice in currentUserPractices | filter: {club: club.id}">
-                <p> Træning {{formatDate(practice.startTime)}} ({{practice.durationMinutes}} minutter)</p>
+            <div class="div-floaty" ng-repeat="practice in currentUserPractices | filter: {club: club.id}">
+                <p class="p-floaty"> Træning {{formatDate(practice.startTime)}} ({{practice.durationMinutes}} minutter)</p>
                 
                 <button ng-class="{'btn': true, 'tilmeld-traening-btn': true, 'btn-default': !practiceSelectionIsConfirmed(practice), 'btn-success': practiceSelectionIsConfirmed(practice)}" ng-click="confirmPractice(practice)">Jeg kommer!</button>
                 
                 <button ng-class="{'btn': true, 'tilmeld-traening-btn': true, 'btn-default': !practiceSelectionIsRejected(practice), 'btn-danger': practiceSelectionIsRejected(practice)}" ng-click="rejectPractice(practice)">Jeg kommer ikke!</button>
+
+                <p id="p-tilmeld-traening" class="small"><em>{{practice.confirmed.length}} deltager, {{practice.rejected.length}} deltager ikke ({{practice.invited.length}} har ikke svaret)</em></p>
             <div>
-
-
+            <br/><br/>
         </div>
     </div>
 

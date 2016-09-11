@@ -1,12 +1,12 @@
 index:
-- hvis klubber > 0: get /bruger/<id>/traeningspas, vis liste traeningspas
-- for hver traeningspas: vise "kommer | kommer ikke" knap
-- for hver traeningspas: klik ind på detaljer
+- hvis klubber > 0: get /bruger/<id>/traeningspas, vis liste traeningspas. Mangler kun kosmetik
 - hvis adminOrCoach klub > 0 vist admin del
 - vis knap "opret ny klub" ved index-with-clubs
 - bruger klub admin accepter spiller 
 - lav opret klub side
 - get /bruger/<id> => 404: opret bruger, go igen
+- klub admin: opret træning
+
 
 TODO:
 - center navbar text
