@@ -1,6 +1,4 @@
 TODO:
-
-- index træningspas liste skal bruge træningspas navn
 - eksisterende træninger liste
 - klub admin: rediger eksisterende træninger
 
@@ -37,7 +35,8 @@ TODO:
 
 - drift setup
 - about page
-- Demo data
+- Demo data 
+- Demo mode (ny bruger auto med i Andeby Badmintonklub, ved ny klub oprettelse ansøger Ling Bam and Lee Gong Vej automatisk)
 
 Kendte fejl:
 - Hvis en bruger slettes imens en klient har hentet fx en klub med liste af spiller hvor den slettede spiller er i, kan denne klient ikke POST/PUT da alle spillere nu ikke eksisterer. Klienten har ingen nem måde at tjekke på

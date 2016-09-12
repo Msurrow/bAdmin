@@ -268,7 +268,7 @@ def practices():
 
 @app.route("/traeningspas/<int:practiceId>", methods=['GET', 'PUT'])
 def practice(practiceId):
-    
+   
     # Does the træningspas exist?
     traeningspas = [traeningspas for traeningspas in database['traeningspas'] if traeningspas['id'] == practiceId]
     if len(traeningspas) == 0:

@@ -25,7 +25,7 @@
             <div ng-if="!isCoachOrAdmin(club)"><p class="lead">Træningspas i {{club.name}}</p></div>
 
             <div class="div-floaty" ng-repeat="practice in currentUserPractices | filter: {club: club.id}">
-                <p class="p-floaty"> Træning {{formatDate(practice.startTime)}} ({{practice.durationMinutes}} minutter)</p>
+                <p class="p-floaty"> {{practice.name}} {{formatDate(practice.startTime)}} ({{practice.durationMinutes}} minutter)</p>
                 
                 <button ng-class="{'btn': true, 'tilmeld-traening-btn': true, 'btn-default': !practiceSelectionIsConfirmed(practice), 'btn-success': practiceSelectionIsConfirmed(practice)}" ng-click="confirmPractice(practice)">Jeg kommer!</button>
                 
