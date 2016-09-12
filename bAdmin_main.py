@@ -196,6 +196,8 @@ Træningspas datatype:
 """
 @app.route("/traeningspas", methods=['GET', 'POST'])
 def practices():
+    print("Auth dummy: ", request.args.get('userID'), ", ", request.args.get('userAccessToken'))
+
     if request.method == 'POST':
         if not request.json:
             abort(400)
@@ -266,7 +268,7 @@ def practices():
     else:
         return jsonify(database["traeningspas"])
 
-@app.route("/traeningspas/<int:practiceId>", methods=['GET', 'PUT'])
+@app.route("/traeningspas/<int:practiceId>", methods=['GET', 'PUT', 'DELETE'])
 def practice(practiceId):
    
     # Does the træningspas exist?
@@ -335,6 +337,24 @@ def practice(practiceId):
         traeningspas[0]['rejected'] = newRejected
 
         return jsonify(traeningspas[0])
+
+    if request.method == 'DELETE':
+        obj = None
+        pId = -1
+        try:
+            pId = int(practiceId)
+        except TypeError:
+            abort(400)
+
+        for tp in database["traeningspas"]:
+            if tp["id"] is pId:
+                obj = tp
+                break
+
+        if obj is not None:
+            database["traeningspas"].remove(obj)
+
+        return jsonify("")
     # GET
     else:
         return jsonify(traeningspas[0])

@@ -1,7 +1,4 @@
 TODO:
-- eksisterende træninger liste
-- klub admin: rediger eksisterende træninger
-
 - find klub side skal ikke have 'bliv medlem' hvis spiller allerede er medlem
 
 - inviter spillere til træning
@@ -48,7 +45,8 @@ Feature ønsker:
 - Database / ikke in-memory DB
 - HTTPS
 - Bruger rettigheder: skal bruger X kunne kalder /practices eller /users og få listet alle træningsplan/brugere?
-- GMail loging
+- GMail login
+- Klub administrator kan redigere eksisterende træning (omend blot inviterede)
 
 Før deploy:
 - ikke debug mode Flash

@@ -21,8 +21,8 @@
 
         <div id="index-club-list" ng-repeat="club in currentUserClubs">
 
-            <div ng-if="isCoachOrAdmin(club)"><p class="lead">Træningspas i <a href="#/adminClub/{{club.id}}">{{club.name}}</a> <em id="club-can-admin-text" class="bg-warning"> Du kan administrere denne klub</em></p></div>
-            <div ng-if="!isCoachOrAdmin(club)"><p class="lead">Træningspas i {{club.name}}</p></div>
+            <div ng-if="isCoachOrAdmin(club)"><p class="lead">Kommende træningspas i <a href="#/adminClub/{{club.id}}">{{club.name}}</a> <em id="club-can-admin-text" class="bg-warning"> Du kan administrere denne klub</em></p></div>
+            <div ng-if="!isCoachOrAdmin(club)"><p class="lead">Kommende træningspas i {{club.name}}</p></div>
 
             <div class="div-floaty" ng-repeat="practice in currentUserPractices | filter: {club: club.id}">
                 <p class="p-floaty"> {{practice.name}} {{formatDate(practice.startTime)}} ({{practice.durationMinutes}} minutter)</p>

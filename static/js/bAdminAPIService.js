@@ -153,7 +153,17 @@ bAdminAPIService.factory('bAdminAPI', ['$log', '$http', 'gatekeeper', function($
                 "startTime": practiceStartTime,
                 "durationMinutes": practiceDuration,
                 "invited": [],
-                "repeats": newPracticeRepeats
+                "repeats": newPracticeRepeats,
+                "userID": gatekeeper.userId,
+                "userAccessToken": gatekeeper.userAccessToken
+            });
+    }
+
+    bAdminAPIFactory.deletePractice = function(practiceId) {
+        return $http.delete(baseUrl+"traeningspas/"+practiceId, 
+            {
+                "userID": gatekeeper.userId,
+                "userAccessToken": gatekeeper.userAccessToken
             });
     }
 

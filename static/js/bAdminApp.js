@@ -367,22 +367,25 @@ myApp.controller('adminClubController', ['$scope', '$log', 'gatekeeper', '$locat
         bAdminAPI.getClub($scope.currentClubId).then(
             function(response) {
                 $scope.currentClub = response.data;
-
-                //Load practices
-                bAdminAPI.getClubPractices($scope.currentClubId).then(
-                    function(response) {
-                        $scope.currentClubPractices = response.data;
-                    },
-                    function(error) {
-                        $log.debug("Error response from API call:");
-                        $log.debug(error);  
-                    });
+                updateClubPractices();
             }, 
             function(error) {
                 $log.debug("Error response from API call:");
                 $log.debug(error);    
             });
     })();
+
+    var updateClubPractices = function() {
+        //Load practices
+        bAdminAPI.getClubPractices($scope.currentClubId).then(
+            function(response) {
+                $scope.currentClubPractices = response.data;
+            },
+            function(error) {
+                $log.debug("Error response from API call:");
+                $log.debug(error);  
+            });
+    }
 
     $scope.showPracticesFn = function() { $scope.showPractices = true; $scope.showPlayers = false; $scope.showEditClub = false; }
     $scope.showPlayersFn = function() { $scope.showPractices = false; $scope.showPlayers = true; $scope.showEditClub = false; }
@@ -391,15 +394,7 @@ myApp.controller('adminClubController', ['$scope', '$log', 'gatekeeper', '$locat
     $scope.submitNewPractice = function() {
         bAdminAPI.saveNewPractice($scope.currentClubId, $scope.newPracticeName, $scope.newPracticeDate, $scope.newPracticeStartHour, $scope.newPracticeStartMinute, $scope.newPracticeDuration, $scope.newPracticeRepeats).then(
             function(response) {
-                //Update practices
-                bAdminAPI.getClubPractices($scope.currentClubId).then(
-                    function(response) {
-                        $scope.currentClubPractices = response.data;
-                    },
-                    function(error) {
-                        $log.debug("Error response from API call:");
-                        $log.debug(error);
-                    });
+                updateClubPractices();
             }, 
             function(error) {
                 $log.debug("Error response from API call:");
@@ -416,6 +411,17 @@ myApp.controller('adminClubController', ['$scope', '$log', 'gatekeeper', '$locat
 
         $scope.form.$setPristine();
         $scope.form.$setUntouched();
+    }
+
+    $scope.deletePractice = function(practice) {
+        bAdminAPI.deletePractice(practice.id).then(
+            function(response) {
+                updateClubPractices();
+            },
+            function(error) {
+                $log.debug("Error response from API call:");
+                $log.debug(error);                
+            });
     }
 
     $scope.formatDate = function(date) {
