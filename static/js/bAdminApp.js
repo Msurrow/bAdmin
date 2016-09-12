@@ -273,22 +273,43 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
 
 myApp.controller('findClubController', ['$scope', '$log', '$location', 'gatekeeper', 'bAdminAPI', function($scope, $log, $location, gatekeeper, bAdminAPI) {
     $scope.listOfClubs;
+    $scope.currentUser;
     $scope.searchText = "";
 
     var updateClubs = function() {
-                            bAdminAPI.getClubs().then(
-                                function(response) {
-                                    $log.debug("Response from API call:");
-                                    $log.debug(response.data);
+        bAdminAPI.getClubs().then(
+            function(response) {
+                $log.debug("Response from API call:");
+                $log.debug(response.data);
 
-                                    $scope.listOfClubs = response.data;
-                                },
-                                function(error) {
-                                    $log.debug("Error response from API call:");
-                                    $log.debug(error);
-                                }
-                            );    
-                        }     
+                $scope.listOfClubs = response.data;
+            },
+            function(error) {
+                $log.debug("Error response from API call:");
+                $log.debug(error);
+            }
+        );    
+    };
+
+    //Init the controller
+    (function(){    
+        $log.debug("clubController init");
+        if(!gatekeeper.loggedIn) {
+            $log.debug("user not logged in, redirecting to /login");
+            $location.path("/login");
+        } else {
+            bAdminAPI.getUser(gatekeeper.userId).then(
+                function(response) {
+                    $scope.currentUser = response.data;
+                },
+                function(error) {
+                    $log.debug("Error response from API call:");
+                    $log.debug(error);
+                });
+            
+            updateClubs();
+        }
+    })();
 
     $scope.applyAsMember = function(club) {
         bAdminAPI.applyForMembership(club).then(
@@ -301,30 +322,31 @@ myApp.controller('findClubController', ['$scope', '$log', '$location', 'gatekeep
                 $log.debug("Error response from API call:");
                 $log.debug(error);                
             });
-    };
+    }
 
-    $scope.membershipAlreadyRequested = function(klub) {
-        var result = true;
+    $scope.userAlreadyMember = function(club) {
+        var result = false;
 
-        angular.forEach(klub.membershipRequests, function(memReqUserId) {
+        angular.forEach($scope.currentUser.clubs, function(clubId) {
+            if (clubId == club.id) {
+                result = true;
+            }
+        });
+
+        return result;        
+    }
+
+    $scope.membershipAlreadyRequested = function(club) {
+        var result = false;
+
+        angular.forEach(club.membershipRequests, function(memReqUserId) {
             if (memReqUserId == gatekeeper.userId) {
-                result = false;
+                result = true;
             }
         });
 
         return result;
-    };
-
-    //Init the controller
-    (function(){    
-        $log.debug("clubController init");
-        if(!gatekeeper.loggedIn) {
-            $log.debug("user not logged in, redirecting to /login");
-            $location.path("/login");
-        } else {
-            updateClubs();
-        }
-    })();
+    }
 }]);
 
 myApp.controller('aboutController', ['$log', 'gatekeeper', '$location', function($log, gatekeeper, $location) {
