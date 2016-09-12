@@ -1,5 +1,6 @@
 TODO:
 - inviter spillere til træning
+
 - admin klub medlem: vis+accepter anmodning, fjern spiller
 - admin klun medlem: gør til træner, gør til admin
 
@@ -9,7 +10,6 @@ TODO:
 - get /bruger/<id> => 404: opret bruger, go igen
 
 - center navbar text
-- "Dette er demo server" text
 
 - wrap API in oauth auth (se svar 2 her http://stackoverflow.com/questions/5406859/facebook-access-token-server-side-validation-for-iphone-app og https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow#checktoken)
 
@@ -28,6 +28,8 @@ TODO:
 - controllers fjern debug logging / lav så debug mode kan sættes
 
 - konsistenstjek datatyper docs in bAdmin_main.py
+
+- refaktor bAdminApp.js til en controller pr fil
 
 - drift setup
 - about page

@@ -50,12 +50,12 @@
                 <div class="navbar-center-text">
                     <p class="text-center" ng-if="currentUserName">Logget ind som {{currentUserName}}</p>
                 </div>
-
             </div>
         </nav>
+        <p class="bg-danger small" style="padding-top:50px;text-align:center;">Dette er en demo version af app'en, og indeholder kun test data. Du kan ikke regne med dine ændring bliver gemt i længere tid. <a href="#/about">Læs mere her</a></p>
         <div id="partial-content-container">
-            <div ng-view ng-controller="ngviewController"></div> 
+            <div ng-view ng-controller="ngviewController">
+            </div> 
         </div>
-
     </body>
 </html>
