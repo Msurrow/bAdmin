@@ -8,8 +8,8 @@ app = Flask(__name__)
 CORS(app)
 
 
-database = {"brugere": [{"id": 0, "name": "Anton", "clubs": [], "email": "", "phone": 12345678}, {"id": 1, "name": "Huggo", "clubs": [], "email": "", "phone": 12345678}, {"id": 2, "name": "Træner Kvinde", "clubs": [0, 1], "email": "", "phone": 12345678}, {"id": 3, "name": "Træner Mand", "clubs": [0], "email": "", "phone": 12345678}, {"id": 905226362922379, "name": "Mark Surrow", "clubs": [0,1], "email": "msurrow@gmail.com", "phone": 60131201}], 
-            "klubber": [{"id": 0, "name": "FooKlub", "admins": [], "coaches": [], "membershipRequests": []}, {"id": 1, "name": "BarKlub", "admins": [905226362922379], "coaches": [905226362922379], "membershipRequests": [0, 1]}, {"id": 2, "name": "Andeby Badmintonklub", "admins": [], "coaches": [], "membershipRequests": []}],
+database = {"brugere": [{"id": 0, "name": "Anton", "clubs": [], "email": "", "phone": 12345678}, {"id": 1, "name": "Huggo", "clubs": [], "email": "", "phone": 12345678}, {"id": 2, "name": "Træner Kvinde", "clubs": [0, 1], "email": "", "phone": 12345678}, {"id": 3, "name": "Træner Mand", "clubs": [0], "email": "", "phone": 12345678}, {"id": 905226362922379, "name": "Mark Surrow", "clubs": [0, 1], "email": "msurrow@gmail.com", "phone": 60131201}], 
+            "klubber": [{"id": 0, "name": "FooKlub", "admins": [2], "coaches": [2, 3], "membershipRequests": []}, {"id": 1, "name": "BarKlub", "admins": [1, 905226362922379], "coaches": [2, 905226362922379], "membershipRequests": [0, 1]}, {"id": 2, "name": "Andeby Badmintonklub", "admins": [], "coaches": [], "membershipRequests": []}],
             "traeningspas": [{"id": 0, "name": "A-træning", "club": 0, "startTime": datetime(2016, 12, 24, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}, {"id": 1, "name": "B-træning", "club": 0, "startTime": datetime(2016, 12, 31, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}, {"id": 2, "name": "A-træning", "club": 1, "startTime": datetime(2016, 12, 24, 19, 30, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}]}
 
 
@@ -147,11 +147,17 @@ def clubs():
 
         # A club is created without members and coaches, and defaults the admin
         # to the creating user.
-        klub = {"id": database["klubber"][-1]["id"]+1,
+        newClubId = database["klubber"][-1]["id"]+1
+        klub = {"id": newClubId,
                 "name": request.json['name'],
-                "admins": request.json['admins'],
+                "admins": request.json['userID'],
                 "coaches": [],
                 "membershipRequests": []}
+
+        # Since the user created a club, he also needs to be member of the club
+        # which is handled in the user object.
+        brugere = [bruger for bruger in database["brugere"] if bruger["id"] == request.json['userID']]
+        brugere[0]['clubs'].append(newClubId)
 
         database["klubber"].append(klub)
 
@@ -231,7 +237,18 @@ def clubPractices(clubId):
     if not clubId or not isinstance(int(clubId), int):
         abort(404)
 
-    return jsonify([tp for tp in database["traeningspas"] if clubId is tp["club"]]);
+    return jsonify([tp for tp in database["traeningspas"] if clubId is tp["club"]])
+
+@app.route("/klubber/<int:clubId>/medlemmer", methods=['GET'])
+def clubMembers(clubId):
+    print("Auth dummy: ", request.args.get('userID'), ", ", request.args.get('userAccessToken'))
+
+    try:
+        int(clubId)
+    except TypeError:
+        abort(404)
+
+    return jsonify([user for user in database["brugere"] if clubId in user["clubs"]])
 
 """
 Træningspas

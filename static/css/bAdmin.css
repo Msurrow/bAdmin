@@ -87,7 +87,7 @@
     color: grey;    
 }
 
-/* Admin club partial */
+/* Admin club partial PRACTICES */
 .admin-club-part {
     margin-bottom: 50px;
     padding-left: 0px;
@@ -129,4 +129,9 @@ border-color: green;
     padding-top: 0px;
     padding-left: 5px;  
     float: left;
+}
+
+/* Admin club partial MEMBERS */
+.adm-club-member-list {
+    padding-bottom: 5px;
 }

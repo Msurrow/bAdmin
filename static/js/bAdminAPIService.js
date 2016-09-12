@@ -2,7 +2,7 @@
 
 var bAdminAPIService = angular.module('bAdminAPIService', ['authService']);
 
-bAdminAPIService.factory('bAdminAPI', ['$log', '$http', 'gatekeeper', function($log, $http, gatekeeper) {
+bAdminAPIService.factory('bAdminAPI', ['$q', '$log', '$http', 'gatekeeper', function($q, $log, $http, gatekeeper) {
     var bAdminAPIFactory = {};
     var baseUrl = "http://localhost:5000/";
 
@@ -53,6 +53,15 @@ bAdminAPIService.factory('bAdminAPI', ['$log', '$http', 'gatekeeper', function($
 
     bAdminAPIFactory.getClubPractices = function(id) {
         return $http.get(baseUrl + "klubber/" + id + "/traeningspas", {
+            params: {
+                "userID": gatekeeper.userId,
+                "userAccessToken": gatekeeper.userAccessToken
+            }
+        });
+    }
+
+    bAdminAPIFactory.getClubMembers = function(id) {
+        return $http.get(baseUrl + "klubber/" + id + "/medlemmer", {
             params: {
                 "userID": gatekeeper.userId,
                 "userAccessToken": gatekeeper.userAccessToken
@@ -209,6 +218,46 @@ bAdminAPIService.factory('bAdminAPI', ['$log', '$http', 'gatekeeper', function($
             "userID": gatekeeper.userId,
             "userAccessToken": gatekeeper.userAccessToken            
         });
+    }
+
+    bAdminAPIFactory.removeMemberFromClub = function(club, user) {
+        // First PUT update to club obj (removing the user as admin and/or coach)
+        // Return $q.all that will only trigger 'then' when all nested calls are done
+        var newAdmins = club.admins;
+        var idx = newAdmins.indexOf(user.id);
+        if (idx > -1) {
+            newAdmins.splice(idx, 1);
+        }
+        var newCoaches = club.coaches;
+        var idx = newCoaches.indexOf(user.id);
+        if (idx > -1) {
+            newCoaches.splice(idx, 1);
+        }
+
+        return $q.all([$http.put(baseUrl+"klubber/"+club.id, 
+        {
+            "admins": newAdmins,
+            "coaches": newCoaches,
+            "userID": gatekeeper.userId,        
+            "userAccessToken": gatekeeper.userAccessToken 
+        }).then(function(response) {
+            // Then PUT update to user obj (removing the club form the users club list)
+            var newClubs = user.clubs;
+            var idx2 = newClubs.indexOf(club.id);
+            if (idx2 > -1) {
+                newClubs.splice(idx2, 1);
+            }
+            return $http.put(baseUrl+"brugere/"+user.id,
+            {
+                "clubs": newClubs,
+                "userID": gatekeeper.userId,        
+                "userAccessToken": gatekeeper.userAccessToken 
+            });
+        }, function(error) {
+            $log.debug("Error response from API call:");
+            $log.debug(error);
+        })]);
+
     }
 
     return bAdminAPIFactory;

@@ -1,0 +1,79 @@
+<div class="container" ng-controller="adminClubController">
+    <h2>Du administrere nu {{currentClub.name}}</h2>
+
+    <div id="admin-club-menu">
+        <button ng-class="{'btn':true, 'btn-default': true, 'active': showPractices}" ng-click="showPracticesFn()">Træninger</button>
+        <button ng-class="{'btn':true, 'btn-default': true, 'active': showPlayers}" ng-click="showPlayersFn()">Medlemmer</button>
+        <button ng-class="{'btn':true, 'btn-default': true, 'active': showEditClub}" ng-click="showEditClubFn()">Klubdata</button>
+    </div>
+
+    <div ng-show="showPractices" class="admin-club-part col-md-12">
+        <div id="admin-club-create-practices" class="col-md-6">
+            <h4>Opret ny træning</h4>
+            <form name="form" class="css-form" ng-submit="form.$valid && submitNewPractice()">
+                <div class="form-group col-md-6">
+                    <input type="text" minlength="3" maxlength="30" class="form-control" placeholder="Træningspas titel, fx. Seniortræning" ng-model="newPracticeName">
+                    <input id="practiceDate" required class="form-control" placeholder="Vælg dato" ng-model="newPracticeDate">
+                    <script type="text/javascript">
+                        $(function () {
+                            $('#practiceDate').datepicker({
+                                autoclose: true,
+                                startDate: 0,
+                                calendarWeeks: true,
+                                orientation: "bottom left",
+                                format: 'yyyy-mm-dd'
+                            });
+                        });
+                    </script>
+                    <div class="div-floaty">
+                        <input type="number" required min="0" max="24" id="practiceStartTimeHour" class="form-control practiceStartTime" placeholder="Start time" ng-model="newPracticeStartHour">
+                        <p class="p-floaty" id="practiceStartTimeSeperator"><strong>:</strong></p>
+                        <input type="number" required min="0" max="59" id="practiceStartTimeMinute" class="form-control practiceStartTime" placeholder="Start minut" ng-model="newPracticeStartMinute">
+                        <p class="p-floaty small" id="practiceStartTimeText"><i>Tid i 24-time format (fx 18:30)</i></p>
+                    </div>
+
+                    <input type="number" required min="1" max="1440" class="form-control" placeholder="Længde i minutter" ng-model="newPracticeDuration">
+                    <div class="div-floaty">
+                        <input type="number" min="1" max="51" id="practiceRepeat" class="form-control" placeholder="Gentagelser" ng-model="newPracticeRepeats">
+                        <p class="p-floaty small" id="practiceStartTimeText"><i>Opret den samme træning i x uger. Hvis feltet er tom eller 1 er indtastet oprettes kun 1 træning. Gentagelser bliver oprettet på samme ugedag og tid hver uge.</i></p>
+                    </div>
+                    <input type="submit" class="btn btn-default" value="Opret">
+                </div>
+            </form>
+        </div>
+
+        <div id="admin-club-list-existing-practices" class="col-md-6">
+            <h4>Eksisterende træninger</h4>
+            <div class="div-floaty" ng-repeat="practice in currentClubPractices | orderBy: 'startTime'">
+                <p class="p-floaty"> {{practice.name}} {{formatDate(practice.startTime)}} ({{practice.durationMinutes}} minutter)</p>
+                
+                <button class="btn slet-traening-btn btn-danger" ng-click="deletePractice(practice)">Slet træning</button>
+
+                <p id="p-tilmeld-traening" class="small"><em>{{practice.confirmed.length}} deltager, {{practice.rejected.length}} deltager ikke ({{practice.invited.length}} har ikke svaret)</em></p>
+            </div>
+        </div>
+    </div>
+
+    <div ng-show="showPlayers" class="admin-club-part">
+        <div id="admin-club-list-member-requests" class="">
+            <h4>Medlemsanmodninger</h4>
+            <div class="div-floaty adm-club-member-list" ng-repeat="user in currentClubMembershipRequestUsers">
+                <p class="p-floaty"> {{user.name}}</p>
+                <button class="btn tilmeld-traening-btn btn-success" ng-click="acceptMemebershipRequest(user)">Accepter</button>
+                <button class="btn tilmeld-traening-btn btn-danger" ng-click="rejectMemebershipRequest(user)">Afvis</button>
+            </div>            
+        </div>
+
+        <div id="admin-club-list-members" class="">
+            <h4>Medlemmer</h4>
+            <div class="div-floaty adm-club-member-list" ng-repeat="user in currentClubMembers">
+                <p class="p-floaty"> {{user.name}} <small>(ID: {{user.id}})</small></p>
+                <button class="btn tilmeld-traening-btn btn-danger" ng-click="removeMember(user)">Fjern som medlem</button>
+            </div>
+        </div>
+    </div>
+
+    <div ng-show="showEditClub" class="admin-club-part">
+        <h4>Rediger klub</h4>
+    </div>
+</div>

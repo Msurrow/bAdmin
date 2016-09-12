@@ -1,21 +1,27 @@
-TODO:
+TODO Demo version 1:
+- admin klub medlem: fjern spiller
+- hvorfor vises nye træninger, hvor ingen er inviteret
 - inviter spillere til træning
-
-- admin klub medlem: vis+accepter anmodning, fjern spiller
-- admin klun medlem: gør til træner, gør til admin
-
 - lav opret/rediger klub side
-- klub auto accepter alle nye spillere
+- Tjek ny bruger kan logge ind / autooprettes nye brugere?
+- Controllers fjern debug logging / lav så debug mode kan sættes
+- drift setup
+- about page
+- Demo data
+- Demo mode (ny bruger auto med i Andeby Badmintonklub, ved ny klub oprettelse ansøger Lin Bam and Lee Gong Vej automatisk)
 
-- get /bruger/<id> => 404: opret bruger, go igen
-
-- center navbar text
-
+TODO Demo version 2:
+- Demo versions nummer 
 - wrap API in oauth auth (se svar 2 her http://stackoverflow.com/questions/5406859/facebook-access-token-server-side-validation-for-iphone-app og https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow#checktoken)
 - gatekeeper access token
 
+TODO Demo version 3:
+- center navbar text
+- admin klub medlem: gør til træner, gør til admin. se http://jsfiddle.net/bmleite/PQvQ2/
 - bruger opret og opdater: valider email, valider tlf
+- klub auto accepter alle nye spillere indstilling
 
+TODO Demo version 4:
 - testcases: getuser bad id
 - testcases: træningspas
 - testcases: alle brug af input->datetimes, tjek for input er string og længde. også dateutil.parse
@@ -27,7 +33,6 @@ TODO:
 
 - custom errors i API?
 - bedre errors in controllers
-- controllers fjern debug logging / lav så debug mode kan sættes
 
 - konsistenstjek datatyper docs in bAdmin_main.py
 - log warnings alle de steder i API hvor GET returnere første element af en liste, og der -mod forventning- er mere end ét element i listen
@@ -35,21 +40,23 @@ TODO:
 - refaktor bAdminApp.js til en controller pr fil
 - refaktor .tilmeld-traening-btn css om til global liste-knap css
 
-- drift setup
-- about page
-- Demo data 
-- Demo mode (ny bruger auto med i Andeby Badmintonklub, ved ny klub oprettelse ansøger Ling Bam and Lee Gong Vej automatisk)
-
+===========
 Før deploy:
+===========
 - ikke debug mode Flash
 - ikke debug logging Angular
 - brug angular minified versioner
 
+===============
 Kendte fejl:
+===============
 - Hvis en bruger slettes imens en klient har hentet fx en klub med liste af spiller hvor den slettede spiller er i, kan denne klient ikke POST/PUT da alle spillere nu ikke eksisterer. Klienten har ingen nem måde at tjekke på
 - Hvis klient A og B har GETtet samme version af et obj, fx. klub, og klient A PUTer en opdatering til objektet, og klient B senere PUTer en opdatering til samme object, uden at have GETtet en opdatering, så mistes opdateringen fra A. Det gælder p.t. for acceptMemebershipRequest, rejectMemebershipRequest, confirmPractice, rejectPractice
+- bAdminAPIService.acceptMemebershipRequest laver to requests. Hvis ét af de to fejler (og det anden ikke gør), er DB'en ikke længere konsistent mellem klub.membershipRequests og bruger.clubs
 
+===============
 Feature ønsker:
+===============
 - Træningstrupper: opret/rediger, placer medlem på træningstrup, inviter træningstrup (mange medlemmer) ved opret træning
 - Bruger rediger side / slet Bruger (?)
 - Slet Klub (?) 
@@ -60,11 +67,11 @@ Feature ønsker:
 - Klub administrator kan redigere eksisterende træning (omend blot inviterede)
 - Dokumenter dev miljø + deploy
 - Gemmel IE browser blokering
+- Backend: Bruger obj.clubs må ikke kunne opdateres til at fjerne en klub, hvor brugeren er admin eller coach
 
-
-
-
+==================================
 JS controller refaktor konsistens:
+==================================
 - vars
 - lokale helpers
 - lokale fns
