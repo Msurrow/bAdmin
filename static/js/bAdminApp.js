@@ -376,6 +376,10 @@ myApp.controller('adminClubController', ['$scope', '$log', 'gatekeeper', '$locat
     $scope.newPracticeDuration = "";
     $scope.newPracticeRepeats = "";
 
+    //Membership adm vars
+    $scope.currentClubMemberships = [];
+    $scope.currentClubMembershipRequestUsers = [];
+
     //Init the controller   
     (function(){
         $log.debug("adminClub init");
@@ -390,6 +394,7 @@ myApp.controller('adminClubController', ['$scope', '$log', 'gatekeeper', '$locat
             function(response) {
                 $scope.currentClub = response.data;
                 updateClubPractices();
+                updateMembershipRequestUsers();
             }, 
             function(error) {
                 $log.debug("Error response from API call:");
@@ -407,6 +412,26 @@ myApp.controller('adminClubController', ['$scope', '$log', 'gatekeeper', '$locat
                 $log.debug("Error response from API call:");
                 $log.debug(error);  
             });
+    }
+
+    var updateMembershipRequestUsers = function() {
+        //Reset the list as user objects will be resolved async, and we 
+        //need to ensure we get a fresh list (no dublicates or old objects)
+        $scope.currentClubMembershipRequestUsers = [];
+        angular.forEach($scope.currentClub.membershipRequests, function(userId) {
+            bAdminAPI.getUser(userId).then(
+                function(response) {
+                    $scope.currentClubMembershipRequestUsers.push(response.data);
+                },
+                function(error) {
+                    $log.debug("Error response from API call:");
+                    $log.debug(error);  
+                });
+        });
+    }
+
+    var updateClubMemberships = function() {
+        
     }
 
     $scope.showPracticesFn = function() { $scope.showPractices = true; $scope.showPlayers = false; $scope.showEditClub = false; }
@@ -443,6 +468,34 @@ myApp.controller('adminClubController', ['$scope', '$log', 'gatekeeper', '$locat
             function(error) {
                 $log.debug("Error response from API call:");
                 $log.debug(error);                
+            });
+    }
+
+    $scope.acceptMemebershipRequest = function(user) {
+        bAdminAPI.acceptMemebershipRequest($scope.currentClub, user).then(
+            function(response) {
+                // Updated club object is returned from the server.
+                // Use this to update the local club obj membership request list.
+                $scope.currentClub = response.data;
+                updateMembershipRequestUsers();
+            },
+            function(error) {
+                $log.debug("Error response from API call:");
+                $log.debug(error);  
+            });
+    }
+
+    $scope.rejectMemebershipRequest = function(user) {
+        bAdminAPI.rejectMemebershipRequest($scope.currentClub, user).then(
+            function(response) {
+                // Updated club object is returned from the server.
+                // Use this to update the local club obj membership request list.
+                $scope.currentClub = response.data;
+                updateMembershipRequestUsers();
+            },
+            function(error) {
+                $log.debug("Error response from API call:");
+                $log.debug(error);  
             });
     }
 

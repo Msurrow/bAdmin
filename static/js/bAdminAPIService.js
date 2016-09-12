@@ -52,7 +52,7 @@ bAdminAPIService.factory('bAdminAPI', ['$log', '$http', 'gatekeeper', function($
     }
 
     bAdminAPIFactory.getClubPractices = function(id) {
-        return $http.get(baseUrl + "clubs/" + id + "/traeningspas", {
+        return $http.get(baseUrl + "klubber/" + id + "/traeningspas", {
             params: {
                 "userID": gatekeeper.userId,
                 "userAccessToken": gatekeeper.userAccessToken
@@ -165,6 +165,50 @@ bAdminAPIService.factory('bAdminAPI', ['$log', '$http', 'gatekeeper', function($
                 "userID": gatekeeper.userId,
                 "userAccessToken": gatekeeper.userAccessToken
             });
+    }
+
+    bAdminAPIFactory.acceptMemebershipRequest = function(club, user) {
+        // Update user object server side with new club
+        var userId = user.id;
+        var userClubs = user.clubs;
+        userClubs.push(club.id);
+
+        $http.put(baseUrl+"brugere/"+userId,
+        {
+            "clubs": userClubs,
+            "userID": gatekeeper.userId,
+            "userAccessToken": gatekeeper.userAccessToken            
+        });
+
+        // Update club object server side with new membershipRequests list
+        var clubId = club.id;
+        var membershipRequests = club.membershipRequests;
+        var idx = membershipRequests.indexOf(userId);
+        membershipRequests.splice(idx, 1);
+
+        return $http.put(baseUrl+"klubber/"+clubId, 
+        {
+            "membershipRequests": membershipRequests,
+            "userID": gatekeeper.userId,
+            "userAccessToken": gatekeeper.userAccessToken            
+        });
+    }
+
+    bAdminAPIFactory.rejectMemebershipRequest = function(club, user) {
+        // Update club object server side with new membershipRequests list
+        // Since the user was rejected, there is nothing to update on the user object
+        var userId = user.id;
+        var clubId = club.id;
+        var membershipRequests = club.membershipRequests;
+        var idx = membershipRequests.indexOf(userId);
+        membershipRequests.splice(idx, 1);
+
+        return $http.put(baseUrl+"klubber/"+clubId, 
+        {
+            "membershipRequests": membershipRequests,
+            "userID": gatekeeper.userId,
+            "userAccessToken": gatekeeper.userAccessToken            
+        });
     }
 
     return bAdminAPIFactory;

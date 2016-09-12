@@ -12,8 +12,9 @@ TODO:
 - center navbar text
 
 - wrap API in oauth auth (se svar 2 her http://stackoverflow.com/questions/5406859/facebook-access-token-server-side-validation-for-iphone-app og https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow#checktoken)
+- gatekeeper access token
 
-- bruger opret: valider email, valider tlf
+- bruger opret og opdater: valider email, valider tlf
 
 - testcases: getuser bad id
 - testcases: træningspas
@@ -22,14 +23,17 @@ TODO:
 - testcases: GET bruger/id/træningspas incl bad id
 - testcases: alle parsing af int i urls/params til ints (alle steder hvor int(bla) er kaldt (int(bla) kaste ValueException, og det er kodet som om det bare retunere false))
 - testcases: GET klub træningspas
+- testcases: brugere PUT
 
 - custom errors i API?
 - bedre errors in controllers
 - controllers fjern debug logging / lav så debug mode kan sættes
 
 - konsistenstjek datatyper docs in bAdmin_main.py
+- log warnings alle de steder i API hvor GET returnere første element af en liste, og der -mod forventning- er mere end ét element i listen
 
 - refaktor bAdminApp.js til en controller pr fil
+- refaktor .tilmeld-traening-btn css om til global liste-knap css
 
 - drift setup
 - about page
@@ -43,6 +47,7 @@ Før deploy:
 
 Kendte fejl:
 - Hvis en bruger slettes imens en klient har hentet fx en klub med liste af spiller hvor den slettede spiller er i, kan denne klient ikke POST/PUT da alle spillere nu ikke eksisterer. Klienten har ingen nem måde at tjekke på
+- Hvis klient A og B har GETtet samme version af et obj, fx. klub, og klient A PUTer en opdatering til objektet, og klient B senere PUTer en opdatering til samme object, uden at have GETtet en opdatering, så mistes opdateringen fra A. Det gælder p.t. for acceptMemebershipRequest, rejectMemebershipRequest, confirmPractice, rejectPractice
 
 Feature ønsker:
 - Træningstrupper: opret/rediger, placer medlem på træningstrup, inviter træningstrup (mange medlemmer) ved opret træning
@@ -54,3 +59,15 @@ Feature ønsker:
 - GMail login
 - Klub administrator kan redigere eksisterende træning (omend blot inviterede)
 - Dokumenter dev miljø + deploy
+- Gemmel IE browser blokering
+
+
+
+
+JS controller refaktor konsistens:
+- vars
+- lokale helpers
+- lokale fns
+- init
+- scope fns
+- scope helpers

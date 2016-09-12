@@ -9,7 +9,7 @@ CORS(app)
 
 
 database = {"brugere": [{"id": 0, "name": "Anton", "clubs": [], "email": "", "phone": 12345678}, {"id": 1, "name": "Huggo", "clubs": [], "email": "", "phone": 12345678}, {"id": 2, "name": "Træner Kvinde", "clubs": [0, 1], "email": "", "phone": 12345678}, {"id": 3, "name": "Træner Mand", "clubs": [0], "email": "", "phone": 12345678}, {"id": 905226362922379, "name": "Mark Surrow", "clubs": [0,1], "email": "msurrow@gmail.com", "phone": 60131201}], 
-            "klubber": [{"id": 0, "name": "FooKlub", "admins": [], "coaches": [], "membershipRequests": []}, {"id": 1, "name": "BarKlub", "admins": [905226362922379], "coaches": [905226362922379], "membershipRequests": []}, {"id": 2, "name": "Andeby Badmintonklub", "admins": [], "coaches": [], "membershipRequests": []}],
+            "klubber": [{"id": 0, "name": "FooKlub", "admins": [], "coaches": [], "membershipRequests": []}, {"id": 1, "name": "BarKlub", "admins": [905226362922379], "coaches": [905226362922379], "membershipRequests": [0, 1]}, {"id": 2, "name": "Andeby Badmintonklub", "admins": [], "coaches": [], "membershipRequests": []}],
             "traeningspas": [{"id": 0, "name": "A-træning", "club": 0, "startTime": datetime(2016, 12, 24, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}, {"id": 1, "name": "B-træning", "club": 0, "startTime": datetime(2016, 12, 31, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}, {"id": 2, "name": "A-træning", "club": 1, "startTime": datetime(2016, 12, 24, 19, 30, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}]}
 
 
@@ -50,7 +50,7 @@ def users():
     else:
         return jsonify(database["brugere"])
 
-@app.route("/brugere/<int:userId>", methods=['GET'])
+@app.route("/brugere/<int:userId>", methods=['GET', 'PUT'])
 def user(userId):
     print("Auth dummy: ", request.args.get('userID'), ", ", request.args.get('userAccessToken'))
 
@@ -58,7 +58,58 @@ def user(userId):
     if len(bruger) == 0:
         abort(404)
 
-    return jsonify(bruger[0])
+    if request.method == 'PUT':
+        if not request.json:
+            abort(400)
+
+        newName = bruger[0]['name']
+        newClubs = bruger[0]['clubs']
+        newEmail = bruger[0]['email']
+        newPhone = bruger[0]['phone']
+
+        # Are we updating name? If so, validate and update
+        if 'name' in request.json:
+            # Don't allow empty name
+            if request.json['name'] is "" or len(request.json['name']) < 1:
+                abort(400)
+            else:
+                newName = request.json['name']
+
+        # Are we updating admins list? If so, validate and update. Overwrite
+        # existing with input
+        if 'clubs' in request.json:
+            # A club must have at least one admin, and all admins in list are
+            # users
+            if not isinstance(request.json['clubs'], list) or not doesAllUsersInListExist(request.json['clubs']):
+                abort(400)
+            else:
+                newClubs = request.json['clubs']
+
+        # Are we updating name? If so, validate and update
+        if 'email' in request.json:
+            # Don't allow empty name
+            if request.json['email'] is "" or len(request.json['email']) < 1:
+                abort(400)
+            else:
+                newEmail = request.json['email']
+
+        # Are we updating name? If so, validate and update
+        if 'phone' in request.json:
+            # Don't allow empty name
+            if request.json['phone'] is "" or len(request.json['phone']) < 1:
+                abort(400)
+            else:
+                newPhone = request.json['phone']
+
+        bruger[0]['name'] = newName
+        bruger[0]['clubs'] = newClubs
+        bruger[0]['email'] = newEmail
+        bruger[0]['phone'] = newPhone
+
+        return jsonify(bruger[0])
+    else:
+        # GET
+        return jsonify(bruger[0])
 
 @app.route("/brugere/<int:userId>/traeningspas", methods=['GET'])
 def userPractices(userId):
@@ -138,7 +189,7 @@ def club(clubId):
         # Are we updating admins list? If so, validate and update. Overwrite
         # existing with input
         if 'admins' in request.json:
-            # A club must have at least one admin, and all admins in list are
+            # A club must have at least one admin, and all admins in list are 
             # users
             if not isinstance(request.json['admins'], list) or len(request.json['admins']) < 1 or not doesAllUsersInListExist(request.json['admins']):
                 abort(400)
@@ -172,7 +223,8 @@ def club(clubId):
     # GET
     else:
         return jsonify(klub[0])
-@app.route("/clubs/<int:clubId>/traeningspas", methods=['GET'])
+
+@app.route("/klubber/<int:clubId>/traeningspas", methods=['GET'])
 def clubPractices(clubId):
     print("Auth dummy: ", request.args.get('userID'), ", ", request.args.get('userAccessToken'))
 
