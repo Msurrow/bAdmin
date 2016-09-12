@@ -1,6 +1,5 @@
 TODO:
-- opret træning repeat
-- opret tærning er i GMT (server side) skal være lokal
+
 - index træningspas liste skal bruge træningspas navn
 - eksisterende træninger liste
 - klub admin: rediger eksisterende træninger

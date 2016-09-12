@@ -118,7 +118,6 @@
 .css-form input.ng-invalid.ng-touched {
 border-color: red;
 }
-
 .css-form input.ng-valid.ng-touched {
 border-color: green;
 }

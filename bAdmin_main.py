@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, abort, make_response, send_file
 from flask.ext.cors import CORS
 from datetime import datetime
+from datetime import timedelta
 import dateutil.parser
 
 app = Flask(__name__)
@@ -232,18 +233,33 @@ def practices():
         if 'invited' not in request.json or not isinstance(request.json['invited'], list) or not doesAllUsersInListExist(request.json['invited']):
             abort(400)
 
-        # A practice is created without confirmed or rejected invitees
-        traeningspas = {"id": database["traeningspas"][-1]["id"]+1,
-                        "name": request.json['name'],
-                        "club": int(request.json['club']),
-                        "startTime": dateutil.parser.parse(request.json['startTime']),
-                        "durationMinutes": request.json['durationMinutes'],
-                        #"invited": request.json['invited'],
-                        "invited": [905226362922379],
-                        "confirmed": [],
-                        "rejected": []}
+        repeats = 1        
+        if 'repeats' in request.json and request.json['repeats'] is not None:
+            try:
+                if int(request.json['repeats']) <= 0 or int(request.json['repeats']) > 51:
+                    abort(400)
+                else:
+                    repeats = int(request.json['repeats'])
+            except TypeError:
+                abort(400)
 
-        database["traeningspas"].append(traeningspas)
+        # A practice is created without confirmed or rejected invitees
+        print(request.json)
+        pDate = dateutil.parser.parse(request.json['startTime'])
+
+        for x in range(0, repeats):
+            traeningspas = {"id": database["traeningspas"][-1]["id"]+1,
+                            "name": request.json['name'],
+                            "club": int(request.json['club']),
+                            "startTime": pDate,
+                            "durationMinutes": request.json['durationMinutes'],
+                            #"invited": request.json['invited'],
+                            "invited": [905226362922379],
+                            "confirmed": [],
+                            "rejected": []}
+            database["traeningspas"].append(traeningspas)
+            # Add one week to the date
+            pDate = pDate + timedelta(weeks=1)
 
         return jsonify(traeningspas)
     # GET
@@ -252,7 +268,7 @@ def practices():
 
 @app.route("/traeningspas/<int:practiceId>", methods=['GET', 'PUT'])
 def practice(practiceId):
-    print(request.json)
+    
     # Does the træningspas exist?
     traeningspas = [traeningspas for traeningspas in database['traeningspas'] if traeningspas['id'] == practiceId]
     if len(traeningspas) == 0:

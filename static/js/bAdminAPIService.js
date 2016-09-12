@@ -141,7 +141,7 @@ bAdminAPIService.factory('bAdminAPI', ['$log', '$http', 'gatekeeper', function($
         //If name is left empty just use a default
         var practiceName = newPracticeName === "" ? "Træningspas" : newPracticeName;
         //Parse dato into ISO8601 YYYY-MM-DD HH:MM. Asumes datepicker format option is set correctly
-        var practiceStartTime = newPracticeDate + " " + newPracticeStartHour + ":" + newPracticeStartMinute;
+        var practiceStartTime = moment(newPracticeDate + " " + newPracticeStartHour + ":" + newPracticeStartMinute).toString();
         var practiceDuration = newPracticeDuration;
         //We include repeats param and let the backend handle it, to avoid multiple requests
         var practiceRepeats = newPracticeRepeats;
@@ -152,7 +152,8 @@ bAdminAPIService.factory('bAdminAPI', ['$log', '$http', 'gatekeeper', function($
                 "name": practiceName,
                 "startTime": practiceStartTime,
                 "durationMinutes": practiceDuration,
-                "invited": []
+                "invited": [],
+                "repeats": newPracticeRepeats
             });
     }
 

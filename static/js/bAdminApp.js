@@ -413,6 +413,9 @@ myApp.controller('adminClubController', ['$scope', '$log', 'gatekeeper', '$locat
         $scope.newPracticeStartMinute = "";
         $scope.newPracticeDuration = "";
         $scope.newPracticeRepeats = "";
+
+        $scope.form.$setPristine();
+        $scope.form.$setUntouched();
     }
 
     $scope.formatDate = function(date) {
