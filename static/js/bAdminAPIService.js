@@ -69,6 +69,15 @@ bAdminAPIService.factory('bAdminAPI', ['$q', '$log', '$http', 'gatekeeper', func
         });
     }
 
+    bAdminAPIFactory.saveNewClub = function(clubName) {
+        return $http.post(baseUrl+"klubber", 
+            {
+                "name": clubName,
+                "userID": gatekeeper.userId,
+                "userAccessToken": gatekeeper.userAccessToken
+            });        
+    }
+
     bAdminAPIFactory.applyForMembership = function(clubObj) {
         var mreqs = clubObj.membershipRequests.slice();
         mreqs.push(gatekeeper.userId);

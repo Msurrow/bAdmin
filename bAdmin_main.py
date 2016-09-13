@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)
 
 
-database = {"brugere": [{"id": 0, "name": "Anton", "clubs": [], "email": "", "phone": 12345678}, {"id": 1, "name": "Huggo", "clubs": [], "email": "", "phone": 12345678}, {"id": 2, "name": "Træner Kvinde", "clubs": [0, 1], "email": "", "phone": 12345678}, {"id": 3, "name": "Træner Mand", "clubs": [0], "email": "", "phone": 12345678}, {"id": 905226362922379, "name": "Mark Surrow", "clubs": [0, 1], "email": "msurrow@gmail.com", "phone": 60131201}], 
+database = {"brugere": [{"id": 0, "name": "Anton", "clubs": [], "email": "", "phone": 12345678}, {"id": 1, "name": "Huggo", "clubs": [], "email": "", "phone": 12345678}, {"id": 2, "name": "Træner Kvinde", "clubs": [0, 1], "email": "", "phone": 12345678}, {"id": 3, "name": "Træner Mand", "clubs": [0], "email": "", "phone": 12345678}], #{"id": 905226362922379, "name": "Mark Surrow", "clubs": [0, 1], "email": "msurrow@gmail.com", "phone": 60131201}
             "klubber": [{"id": 0, "name": "FooKlub", "admins": [2], "coaches": [2, 3], "membershipRequests": []}, {"id": 1, "name": "BarKlub", "admins": [1, 905226362922379], "coaches": [2, 905226362922379], "membershipRequests": [0, 1]}, {"id": 2, "name": "Andeby Badmintonklub", "admins": [], "coaches": [], "membershipRequests": []}],
             "traeningspas": [{"id": 0, "name": "A-træning", "club": 0, "startTime": datetime(2016, 12, 24, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}, {"id": 1, "name": "B-træning", "club": 0, "startTime": datetime(2016, 12, 31, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}, {"id": 2, "name": "A-træning", "club": 1, "startTime": datetime(2016, 12, 24, 19, 30, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}]}
 
@@ -137,13 +137,11 @@ def clubs():
         if not request.json or 'name' not in request.json or len(request.json['name']) < 1:
             abort(400)
 
-        # Check request have admin list with atleast one admin. Validate
-        # user(s) for admin(s) exists
-        if 'admins' in request.json and isinstance(request.json['admins'], list) and len(request.json['admins']) > 0:
-            if not doesAllUsersInListExist(request.json['admins']):
+       # Are we updating name? If so, validate and update
+        if 'name' in request.json:
+            # Don't allow empty name
+            if request.json['name'] is "" or len(request.json['name']) < 3:
                 abort(400)
-        else:
-            abort(400)
 
         # A club is created without members and coaches, and defaults the admin
         # to the creating user.
@@ -156,7 +154,7 @@ def clubs():
 
         # Since the user created a club, he also needs to be member of the club
         # which is handled in the user object.
-        brugere = [bruger for bruger in database["brugere"] if bruger["id"] == request.json['userID']]
+        brugere = [bruger for bruger in database["brugere"] if bruger["id"] == int(request.json['userID'])]
         brugere[0]['clubs'].append(newClubId)
 
         database["klubber"].append(klub)

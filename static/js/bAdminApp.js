@@ -360,6 +360,30 @@ myApp.controller('aboutController', ['$log', 'gatekeeper', '$location', function
     })();
 }]);
 
+myApp.controller('createClubController', ['$scope', '$log', 'gatekeeper', '$location', '$routeParams', 'bAdminAPI', function($scope, $log, gatekeeper, $location, $routeParams, bAdminAPI) {
+    $scope.newClubName = "";
+
+    //Init the controller   
+    (function(){
+        $log.debug("createClub init");
+        if(!gatekeeper.loggedIn) {
+            $log.debug("user not logged in, redirecting to /login");
+            $location.path("/login");
+        }
+    })();
+
+    $scope.submitNewClub = function() {
+        bAdminAPI.saveNewClub($scope.newClubName).then(
+            function(response) {
+                $location.path("#");
+            },
+            function(error) {
+                $log.debug("Error response from API call:");
+                $log.debug(error); 
+            });
+    }
+}]);
+
 myApp.controller('adminClubController', ['$scope', '$log', 'gatekeeper', '$location', '$routeParams', 'bAdminAPI', function($scope, $log, gatekeeper, $location, $routeParams, bAdminAPI) {
     $scope.currentClubId = -1;
     $scope.currentClub;

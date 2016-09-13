@@ -1,5 +1,4 @@
 TODO Demo version 1:
-- lav opret/rediger klub side
 - Tjek ny bruger kan logge ind / autooprettes nye brugere?
 - Controllers fjern debug logging / lav så debug mode kan sættes
 - drift setup
@@ -14,7 +13,9 @@ TODO Demo version 2:
 TODO Demo version 3:
 - center navbar text
 - admin klub medlem: gør til træner, gør til admin. se http://jsfiddle.net/bmleite/PQvQ2/
+- lav rediger klub side
 - bruger opret og opdater: valider email, valider tlf
+- sanitise input strenge fra POST og PUT (specielt "name")
 - klub auto accepter alle nye spillere indstilling
 
 TODO Demo version 4:
