@@ -1,10 +1,8 @@
 TODO Demo version 1:
-- datetime problem
 - lav opret/rediger klub side
 - Tjek ny bruger kan logge ind / autooprettes nye brugere?
 - Controllers fjern debug logging / lav så debug mode kan sættes
 - drift setup
-- about page
 - Demo data
 - Demo mode (ny bruger auto med i Andeby Badmintonklub, ved ny klub oprettelse ansøger Lin Bam and Lee Gong Vej automatisk)
 
