@@ -202,7 +202,7 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
 
     $scope.formatDate = function(date) {
         moment.locale("da");
-        return moment(date).format("dddd H[:]mm, D MMM Y");
+        return moment.utc(date).format("dddd H[:]mm, D MMM Y");
     }
 
     var updatePractices = function() {
@@ -375,6 +375,7 @@ myApp.controller('adminClubController', ['$scope', '$log', 'gatekeeper', '$locat
     $scope.newPracticeStartMinute = "";
     $scope.newPracticeDuration = "";
     $scope.newPracticeRepeats = "";
+    $scope.newPracticeInvitedPlayers = [];
 
     //Membership adm vars
     $scope.currentClubMembers = [];
@@ -447,7 +448,7 @@ myApp.controller('adminClubController', ['$scope', '$log', 'gatekeeper', '$locat
     $scope.showEditClubFn = function() { $scope.showPractices = false; $scope.showPlayers = false; $scope.showEditClub = true; }
 
     $scope.submitNewPractice = function() {
-        bAdminAPI.saveNewPractice($scope.currentClubId, $scope.newPracticeName, $scope.newPracticeDate, $scope.newPracticeStartHour, $scope.newPracticeStartMinute, $scope.newPracticeDuration, $scope.newPracticeRepeats).then(
+        bAdminAPI.saveNewPractice($scope.currentClubId, $scope.newPracticeName, $scope.newPracticeDate, $scope.newPracticeStartHour, $scope.newPracticeStartMinute, $scope.newPracticeDuration, $scope.newPracticeRepeats, $scope.newPracticeInvitedPlayers).then(
             function(response) {
                 updateClubPractices();
             }, 
@@ -463,6 +464,7 @@ myApp.controller('adminClubController', ['$scope', '$log', 'gatekeeper', '$locat
         $scope.newPracticeStartMinute = "";
         $scope.newPracticeDuration = "";
         $scope.newPracticeRepeats = "";
+        $scope.newPracticeInvitedPlayers = [];
 
         $scope.form.$setPristine();
         $scope.form.$setUntouched();
@@ -522,7 +524,7 @@ myApp.controller('adminClubController', ['$scope', '$log', 'gatekeeper', '$locat
 
     $scope.formatDate = function(date) {
         moment.locale("da");
-        return moment(date).format("dddd H[:]mm, D MMM Y");
+        return moment.utc(date).format("dddd H[:]mm, D MMM Y");
     }
 }]);
 

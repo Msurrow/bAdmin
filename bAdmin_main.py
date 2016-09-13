@@ -317,6 +317,7 @@ def practices():
         # A practice is created without confirmed or rejected invitees
         print(request.json)
         pDate = dateutil.parser.parse(request.json['startTime'])
+        print(pDate)
 
         for x in range(0, repeats):
             traeningspas = {"id": database["traeningspas"][-1]["id"]+1,
@@ -324,8 +325,7 @@ def practices():
                             "club": int(request.json['club']),
                             "startTime": pDate,
                             "durationMinutes": request.json['durationMinutes'],
-                            #"invited": request.json['invited'],
-                            "invited": [905226362922379],
+                            "invited": request.json['invited'],
                             "confirmed": [],
                             "rejected": []}
             database["traeningspas"].append(traeningspas)

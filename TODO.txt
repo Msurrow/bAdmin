@@ -1,7 +1,5 @@
 TODO Demo version 1:
-- admin klub medlem: fjern spiller
-- hvorfor vises nye træninger, hvor ingen er inviteret
-- inviter spillere til træning
+- datetime problem
 - lav opret/rediger klub side
 - Tjek ny bruger kan logge ind / autooprettes nye brugere?
 - Controllers fjern debug logging / lav så debug mode kan sættes
@@ -52,7 +50,7 @@ Kendte fejl:
 ===============
 - Hvis en bruger slettes imens en klient har hentet fx en klub med liste af spiller hvor den slettede spiller er i, kan denne klient ikke POST/PUT da alle spillere nu ikke eksisterer. Klienten har ingen nem måde at tjekke på
 - Hvis klient A og B har GETtet samme version af et obj, fx. klub, og klient A PUTer en opdatering til objektet, og klient B senere PUTer en opdatering til samme object, uden at have GETtet en opdatering, så mistes opdateringen fra A. Det gælder p.t. for acceptMemebershipRequest, rejectMemebershipRequest, confirmPractice, rejectPractice
-- bAdminAPIService.acceptMemebershipRequest laver to requests. Hvis ét af de to fejler (og det anden ikke gør), er DB'en ikke længere konsistent mellem klub.membershipRequests og bruger.clubs
+- bAdminAPIService.acceptMemebershipRequest laver to requests. Hvis ét af de to fejler (og det anden ikke gør), er DB'en ikke længere konsistent mellem klub.membershipRequests og bruger.clubs (se implementering af bAdminAPIFactory.removeMemberFromClub for løsning $q.all(..))
 
 ===============
 Feature ønsker:

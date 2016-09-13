@@ -11,7 +11,7 @@
         <div id="admin-club-create-practices" class="col-md-6">
             <h4>Opret ny træning</h4>
             <form name="form" class="css-form" ng-submit="form.$valid && submitNewPractice()">
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-8">
                     <input type="text" minlength="3" maxlength="30" class="form-control" placeholder="Træningspas titel, fx. Seniortræning" ng-model="newPracticeName">
                     <input id="practiceDate" required class="form-control" placeholder="Vælg dato" ng-model="newPracticeDate">
                     <script type="text/javascript">
@@ -36,6 +36,12 @@
                     <div class="div-floaty">
                         <input type="number" min="1" max="51" id="practiceRepeat" class="form-control" placeholder="Gentagelser" ng-model="newPracticeRepeats">
                         <p class="p-floaty small" id="practiceStartTimeText"><i>Opret den samme træning i x uger. Hvis feltet er tom eller 1 er indtastet oprettes kun 1 træning. Gentagelser bliver oprettet på samme ugedag og tid hver uge.</i></p>
+                    </div>
+                    <div id="admin-club-invite-players-select">
+                        <select id="admin-club-players-select" class="form-control" ng-model="newPracticeInvitedPlayers" multiple="">
+                            <option value="{{user.id}}" ng-repeat="user in currentClubMembers">{{user.name}}</option>
+                        </select>
+                        <p class="small" id="practiceStartTimeText"><i>Vælg de personer der skal inviteres til træningen. Kun personer, der er medlem af klubben, kan inviteres.</i></p>
                     </div>
                     <input type="submit" class="btn btn-default" value="Opret">
                 </div>

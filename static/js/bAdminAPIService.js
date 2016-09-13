@@ -145,15 +145,20 @@ bAdminAPIService.factory('bAdminAPI', ['$q', '$log', '$http', 'gatekeeper', func
             });
     }    
 
-    bAdminAPIFactory.saveNewPractice = function(clubId, newPracticeName, newPracticeDate, newPracticeStartHour, newPracticeStartMinute, newPracticeDuration, newPracticeRepeats) {
+    bAdminAPIFactory.saveNewPractice = function(clubId, newPracticeName, newPracticeDate, newPracticeStartHour, newPracticeStartMinute, newPracticeDuration, newPracticeRepeats, newPracticeInvitedPlayers) {
         var clubId = clubId;
         //If name is left empty just use a default
         var practiceName = newPracticeName === "" ? "Træningspas" : newPracticeName;
-        //Parse dato into ISO8601 YYYY-MM-DD HH:MM. Asumes datepicker format option is set correctly
-        var practiceStartTime = moment(newPracticeDate + " " + newPracticeStartHour + ":" + newPracticeStartMinute).toString();
+        //Parse dato into ISO8601 YYYY-MM-DD HH:MM. Asumes datepicker format option is set correctly. Use dates in UTC
+        var practiceStartTime = moment.utc(newPracticeDate + " " + newPracticeStartHour + ":" + newPracticeStartMinute).toString();
+        console.log(practiceStartTime);
         var practiceDuration = newPracticeDuration;
         //We include repeats param and let the backend handle it, to avoid multiple requests
         var practiceRepeats = newPracticeRepeats;
+        var newPracticeInvitedPlayersInts = [];
+        angular.forEach(newPracticeInvitedPlayers, function(playerId) {
+            newPracticeInvitedPlayersInts.push(parseInt(playerId));
+        });
 
         return $http.post(baseUrl+"traeningspas", 
             {
@@ -161,7 +166,7 @@ bAdminAPIService.factory('bAdminAPI', ['$q', '$log', '$http', 'gatekeeper', func
                 "name": practiceName,
                 "startTime": practiceStartTime,
                 "durationMinutes": practiceDuration,
-                "invited": [],
+                "invited": newPracticeInvitedPlayersInts,
                 "repeats": newPracticeRepeats,
                 "userID": gatekeeper.userId,
                 "userAccessToken": gatekeeper.userAccessToken
