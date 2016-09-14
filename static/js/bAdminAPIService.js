@@ -91,8 +91,6 @@ bAdminAPIService.factory('bAdminAPI', ['$q', '$log', '$http', 'gatekeeper', func
         var mreqs = clubObj.membershipRequests.slice();
         mreqs.push(gatekeeper.userId);
 
-        $log.debug("PUT club with membershipRequests: ", mreqs, " (original was: ", clubObj.membershipRequests, " )");
-
         return $http.put(baseUrl+"klubber/"+clubObj.id, 
             {
                 "membershipRequests": mreqs,
@@ -169,7 +167,7 @@ bAdminAPIService.factory('bAdminAPI', ['$q', '$log', '$http', 'gatekeeper', func
         var practiceName = newPracticeName === "" ? "Træningspas" : newPracticeName;
         //Parse dato into ISO8601 YYYY-MM-DD HH:MM. Asumes datepicker format option is set correctly. Use dates in UTC
         var practiceStartTime = moment.utc(newPracticeDate + " " + newPracticeStartHour + ":" + newPracticeStartMinute).toString();
-        console.log(practiceStartTime);
+
         var practiceDuration = newPracticeDuration;
         //We include repeats param and let the backend handle it, to avoid multiple requests
         var practiceRepeats = newPracticeRepeats;
@@ -277,8 +275,7 @@ bAdminAPIService.factory('bAdminAPI', ['$q', '$log', '$http', 'gatekeeper', func
                 "userAccessToken": gatekeeper.userAccessToken 
             });
         }, function(error) {
-            $log.debug("Error response from API call:");
-            $log.debug(error);
+            $log.debug("Error response from API call:", error);
         })]);
 
     }

@@ -1,6 +1,4 @@
 TODO Demo version 1:
-- Tjek ny bruger kan logge ind / autooprettes nye brugere? NEJ - fix
-- Controllers fjern debug logging / lav så debug mode kan sættes
 - drift setup
 - Demo data
 - Demo mode (ny bruger auto med i Andeby Badmintonklub, ved ny klub oprettelse ansøger Lin Bam and Lee Gong Vej automatisk)

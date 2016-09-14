@@ -9,7 +9,7 @@ var myApp = angular.module('bAdminApp', [
 
 myApp.config(['$routeProvider', '$logProvider',
     function($routeProvider, $logProvider) {
-        $logProvider.debugEnabled(true);
+        $logProvider.debugEnabled(false);
 
         $routeProvider.
             when('/', {
@@ -38,8 +38,8 @@ myApp.config(['$routeProvider', '$logProvider',
 myApp.run(['$rootScope', '$window', '$log', 'gatekeeper', '$location', function($rootScope, window, $log, gatekeeper, $location) {
     // This is called with the results from from FB.getLoginStatus().
     function statusChangeCallback(response) {
-        $log.debug('statusChangeCallback');
-        $log.debug(response);
+        $log.debug('OAuth login: Call to statusChangeCallback. ', response);
+
         // The response object is returned with a status field that lets the
         // app know the current login status of the person.
         // Full docs on the response object can be found in the documentation
@@ -47,7 +47,8 @@ myApp.run(['$rootScope', '$window', '$log', 'gatekeeper', '$location', function(
         if (response.status === 'connected') {
             // Logged into your app and Facebook.
             FB.api('/me', {fields: "id, name, email"}, function(response) {
-                $log.debug('Successful login for: ' + response.name);
+                $log.debug('OAuth login: Successful login for: ' + response.name);
+                
                 gatekeeper.doLogin(response.id, response.name, response.email);
                 $("fb-login-button").text("Log ud");                
                 $location.path("/#/");
@@ -55,7 +56,8 @@ myApp.run(['$rootScope', '$window', '$log', 'gatekeeper', '$location', function(
             });
         } else if (response.status === 'not_authorized') {
             // The person is logged into Facebook, but not your app.
-            $log.debug('Not logged into app');
+            $log.debug('OAuth login: User logged into facebook, but app is not authorized.');
+            
             gatekeeper.doLogout();
             $("fb-login-button").text("Log ind");
             $location.path("/login");
@@ -63,7 +65,8 @@ myApp.run(['$rootScope', '$window', '$log', 'gatekeeper', '$location', function(
         } else {
             // The person is not logged into Facebook, so we're not sure if
             // they are logged into this app or not.
-            $log.debug('Not logged into Facebook');
+            $log.debug('OAuth login: User not logged into Facebook');
+
             gatekeeper.doLogout();
             $("fb-login-button").text("Log ind"); 
             $location.path("/login");
@@ -81,7 +84,7 @@ myApp.run(['$rootScope', '$window', '$log', 'gatekeeper', '$location', function(
     }
 
     window.fbAsyncInit = function() {
-        $log.debug("fbAsyncInit RUN")
+        $log.debug("OAuth login: fbAsyncInit() called.")
         FB.init({
             appId      : '525282354344891',
             cookie     : true,  // enable cookies to allow the server to access 
@@ -127,7 +130,6 @@ myApp.run(['$rootScope', '$window', '$log', 'gatekeeper', '$location', function(
 
 myApp.controller('ngviewController', ['$scope', '$log', function($scope, $log) {
     $scope.$on('$viewContentLoaded', function() {
-        $log.debug("ON viewContentLoaded");
         //Re-render all Facebook buttons
         if(typeof(FB) != 'undefined') {FB.XFBML.parse();}
     });    
@@ -144,16 +146,12 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
 
     //Init the controller
     (function(){
-        $log.debug("indexController init");
         if(!gatekeeper.loggedIn) {
-            $log.debug("user not logged in, redirecting to /login");
+            $log.debug("User not logged in, redirecting to /login");
             $location.path("/login");
         } else {
             bAdminAPI.getUser(gatekeeper.userId).then(
                 function(response) {
-                    $log.debug("Get USER: Response from API call:");
-                    $log.debug(response.data);
-
                     $scope.currentUserId = response.data.id;
                     $scope.currentUserName = response.data.name;
                     $scope.currentUserPhone = response.data.phone;
@@ -236,8 +234,6 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
 
         bAdminAPI.confirmPractice(practice).then(
             function(response) {
-                $log.debug("Response from API call:");
-                $log.debug(response.data);
                 updatePractices();
             },
             function(error) {
@@ -254,8 +250,6 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
 
         bAdminAPI.rejectPractice(practice).then(
             function(response) {
-                $log.debug("Response from API call:");
-                $log.debug(response.data);
                 updatePractices();
             },
             function(error) {
@@ -291,9 +285,6 @@ myApp.controller('findClubController', ['$scope', '$log', '$location', 'gatekeep
     var updateClubs = function() {
         bAdminAPI.getClubs().then(
             function(response) {
-                $log.debug("Response from API call:");
-                $log.debug(response.data);
-
                 $scope.listOfClubs = response.data;
             },
             function(error) {
@@ -305,9 +296,8 @@ myApp.controller('findClubController', ['$scope', '$log', '$location', 'gatekeep
 
     //Init the controller
     (function(){    
-        $log.debug("clubController init");
         if(!gatekeeper.loggedIn) {
-            $log.debug("user not logged in, redirecting to /login");
+            $log.debug("User not logged in, redirecting to /login");
             $location.path("/login");
         } else {
             bAdminAPI.getUser(gatekeeper.userId).then(
@@ -326,8 +316,6 @@ myApp.controller('findClubController', ['$scope', '$log', '$location', 'gatekeep
     $scope.applyAsMember = function(club) {
         bAdminAPI.applyForMembership(club).then(
             function(response) {
-                $log.debug("Response from API call:");
-                $log.debug(response.data);
                 updateClubs();
             },
             function(error) {
@@ -364,9 +352,8 @@ myApp.controller('findClubController', ['$scope', '$log', '$location', 'gatekeep
 myApp.controller('aboutController', ['$log', 'gatekeeper', '$location', function($log, gatekeeper, $location) {
     //Init the controller   
     (function(){
-        $log.debug("aboutController init");
         if(!gatekeeper.loggedIn) {
-            $log.debug("user not logged in, redirecting to /login");
+            $log.debug("User not logged in, redirecting to /login");
             $location.path("/login");
         }
     })();
@@ -377,9 +364,8 @@ myApp.controller('createClubController', ['$scope', '$log', 'gatekeeper', '$loca
 
     //Init the controller   
     (function(){
-        $log.debug("createClub init");
         if(!gatekeeper.loggedIn) {
-            $log.debug("user not logged in, redirecting to /login");
+            $log.debug("User not logged in, redirecting to /login");
             $location.path("/login");
         }
     })();
@@ -419,9 +405,8 @@ myApp.controller('adminClubController', ['$scope', '$log', 'gatekeeper', '$locat
 
     //Init the controller   
     (function(){
-        $log.debug("adminClub init");
         if(!gatekeeper.loggedIn) {
-            $log.debug("user not logged in, redirecting to /login");
+            $log.debug("User not logged in, redirecting to /login");
             $location.path("/login");
         }
 
