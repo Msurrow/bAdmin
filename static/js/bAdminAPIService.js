@@ -24,6 +24,15 @@ bAdminAPIService.factory('bAdminAPI', ['$q', '$log', '$http', 'gatekeeper', func
         });
     }
 
+    bAdminAPIFactory.saveNewUser = function() {
+        return $http.post(baseUrl+"brugere", {
+            "userId": gatekeeper.userId,
+            "name": gatekeeper.userName,
+            "email": gatekeeper.userEmail,
+            "userAccessToken": gatekeeper.userAccessToken
+        });
+    }
+
     bAdminAPIFactory.getUserPractices = function(id) {
         return $http.get(baseUrl+"brugere/" + id + "/traeningspas", {
             params: {

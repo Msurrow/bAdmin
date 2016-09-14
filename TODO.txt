@@ -1,5 +1,5 @@
 TODO Demo version 1:
-- Tjek ny bruger kan logge ind / autooprettes nye brugere?
+- Tjek ny bruger kan logge ind / autooprettes nye brugere? NEJ - fix
 - Controllers fjern debug logging / lav så debug mode kan sættes
 - drift setup
 - Demo data
@@ -36,6 +36,9 @@ TODO Demo version 4:
 
 - refaktor bAdminApp.js til en controller pr fil
 - refaktor .tilmeld-traening-btn css om til global liste-knap css
+
+TODO Demo version 5:
+- handle user create error i indexcontroller
 
 ===========
 Før deploy:

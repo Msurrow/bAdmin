@@ -32,20 +32,29 @@ Bruger datatype:
 @app.route("/brugere", methods=['GET', 'POST'])
 def users():
     if request.method == 'POST':
-        if not request.json or 'name' not in request.json or len(request.json['name']) < 1:
+        if not request.json or 'userId' not in request.json or 'name' not in request.json or len(request.json['name']) < 1:
             abort(400)
         else:
-            # A user is created without a club, as they have to apply for
-            # membership (ie. access to) to a club
-            bruger = {"id": database["brugere"][-1]["id"]+1,
-                      "name": request.json['name'],
-                      "clubs": [],
-                      "email": request.json['email'],
-                      "phone": request.json['phone']}
+            try:
+                # Check if the user exits
+                bruger = [bruger for bruger in database["brugere"] if bruger["id"] == int(request.json['userId'])]
+                if len(bruger) == 0:
+                    # A user is created without a club, as they have to apply for
+                    # membership (ie. access to) to a club
+                    bruger = {"id": int(request.json['userId']),
+                              "name": request.json['name'],
+                              "clubs": [],
+                              "email": request.json['email'],
+                              "phone": ""}
 
-            database["brugere"].append(bruger)
+                    database["brugere"].append(bruger)
 
-            return jsonify(bruger)
+                    return jsonify(bruger)
+                else:
+                    # Consider it an error to POST (create) to an existing user object
+                    abort(400)
+            except TypeError:
+                abort(400)
     # GET
     else:
         return jsonify(database["brugere"])
@@ -115,8 +124,11 @@ def user(userId):
 def userPractices(userId):
     print("Auth dummy: ", request.args.get('userID'), ", ", request.args.get('userAccessToken'))
 
-    if not userId or not isinstance(int(userId), int):
-        abort(404)
+    try:
+        if not userId or not int(userId):
+            abort(404)
+    except TypeError:
+        abort(400)
 
     return jsonify([tp for tp in database["traeningspas"] if userId in tp["invited"] or userId in tp["confirmed"] or userId in tp["rejected"]]);
 

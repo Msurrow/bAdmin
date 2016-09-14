@@ -46,9 +46,9 @@ myApp.run(['$rootScope', '$window', '$log', 'gatekeeper', '$location', function(
         // for FB.getLoginStatus().
         if (response.status === 'connected') {
             // Logged into your app and Facebook.
-            FB.api('/me', {fields: "id, name"}, function(response) {
+            FB.api('/me', {fields: "id, name, email"}, function(response) {
                 $log.debug('Successful login for: ' + response.name);
-                gatekeeper.doLogin(response.id, response.name);
+                gatekeeper.doLogin(response.id, response.name, response.email);
                 $("fb-login-button").text("Log ud");                
                 $location.path("/#/");
                 $rootScope.$apply();
@@ -180,7 +180,7 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
                             });                        
                     });
 
-                    //Get currentUser practices
+                    // Get currentUser practices
                     bAdminAPI.getUserPractices($scope.currentUserId).then(
                             function(response) {
                                 $scope.currentUserPractices = response.data;
@@ -193,8 +193,20 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
                     $rootScope.currentUserName = $scope.currentUserName;
                 }, 
                 function(error) {
-                    $log.debug("Error response from API call:");
-                    $log.debug(error);
+                    // User did not exits. If we are logged in, try to create the user
+                    // and redo request
+                    if (gatekeeper.loggedIn) {
+                        // Service gets all arguments from gatekeeper
+                        bAdminAPI.saveNewUser().then(
+                            function(response) {
+                                // Reload index again
+                                $location.path("#");
+                            },
+                            function(error) {
+                                $log.debug("Error response from API call:");
+                                $log.debug(error);
+                            });
+                    }
                 }
             );
         }
