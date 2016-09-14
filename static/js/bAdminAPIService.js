@@ -4,8 +4,8 @@ var bAdminAPIService = angular.module('bAdminAPIService', ['authService']);
 
 bAdminAPIService.factory('bAdminAPI', ['$q', '$log', '$http', 'gatekeeper', function($q, $log, $http, gatekeeper) {
     var bAdminAPIFactory = {};
-    var baseUrl = "http://localhost:5000/";
-    //var baseUrl = "https://badmin-demo.herokuapp.com/";
+    //var baseUrl = "http://localhost:5000/";
+    var baseUrl = "https://badmin-demo.herokuapp.com/";
 
     bAdminAPIFactory.getUsers = function() {
         return $http.get(baseUrl+"brugere", {
