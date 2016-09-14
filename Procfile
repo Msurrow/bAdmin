@@ -1,1 +1,1 @@
-web: gunicorn --bind 0.0.0.0:$PORT bAdmin_main:app
+web: bAdmin_main.py
