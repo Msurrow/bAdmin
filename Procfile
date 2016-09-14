@@ -1,1 +1,1 @@
-web: bAdmin_main.py
+web: python bAdmin_main.py
