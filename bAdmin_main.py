@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, abort, make_response, send_file
-from flask.ext.cors import CORS
+from flask_cors import CORS
 from datetime import datetime
 from datetime import timedelta
 import dateutil.parser
@@ -465,4 +465,4 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+    app.run(debug=False, host="0.0.0.0")

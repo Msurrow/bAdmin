@@ -42,7 +42,7 @@ TODO Demo version 5:
 Før deploy:
 ===========
 - ikke debug mode Flash
-- ikke debug logging Angular
+- ikke debug logging Angular (config del)
 - brug angular minified versioner
 
 ===============
