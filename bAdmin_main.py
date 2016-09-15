@@ -38,7 +38,6 @@ def users():
             abort(400)
         else:
             try:
-                print(request.json)
                 # Check if the user exits
                 bruger = [bruger for bruger in database["brugere"] if bruger["id"] == int(request.json['userId'])]
                 if len(bruger) == 0:
@@ -47,7 +46,7 @@ def users():
                     bruger = {"id": int(request.json['userId']),
                               "name": request.json['name'],
                               "clubs": [],
-                              "email": request.json['email'],
+                              # "email": request.json['email'],
                               "phone": ""}
 
                     database["brugere"].append(bruger)

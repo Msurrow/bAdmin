@@ -4,6 +4,7 @@ TODO Demo version 1:
 
 TODO Demo version 2:
 - Demo versions nummer 
+- Email i opret bruger
 - REDDIS eller PostgresSQL DB
 - wrap API in oauth auth (se svar 2 her http://stackoverflow.com/questions/5406859/facebook-access-token-server-side-validation-for-iphone-app og https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow#checktoken)
 - gatekeeper access token
