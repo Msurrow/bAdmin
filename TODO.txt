@@ -1,5 +1,7 @@
 TODO Demo version 1:
-- Test Louise
+- Alle nye spillere på alle eksisternende træninger i andeby
+- Mark bliver ikke medlem i louises klub
+- Dato i opret træning bliver til "invalid date"
 - Test Kristen, Svend Åge
 
 TODO Demo version 2:
@@ -15,7 +17,7 @@ TODO Demo version 3:
 - lav rediger klub side
 - bruger opret og opdater: valider email, valider tlf
 - sanitise input strenge fra POST og PUT (specielt "name")
-- klub auto accepter alle nye spillere indstilling
+- klub auto accepter alle nye spillere indstilling (tilpas labels i findKlub til "du er nu medlem")
 
 TODO Demo version 4:
 - testcases: getuser bad id
@@ -66,6 +68,7 @@ Feature ønsker:
 - Dokumenter dev miljø + deploy
 - Gemmel IE browser blokering
 - Backend: Bruger obj.clubs må ikke kunne opdateres til at fjerne en klub, hvor brugeren er admin eller coach
+- Spiller kan melde sig ud af klub
 
 ==================================
 JS controller refaktor konsistens:

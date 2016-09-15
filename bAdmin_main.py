@@ -12,7 +12,7 @@ DEMO_MODE_ENABLED = True
 
 database = {"brugere": [{"id": 100000000000001, "name": "Lin Bam", "clubs": [0], "email": "", "phone": 0}, {"id": 100000000000002, "name": "Lee Gong Vej", "clubs": [0], "email": "", "phone": 0}],#, {"id": 905226362922379, "name": "Mark Surrow", "clubs": [0], "email": "msurrow@gmail.com", "phone": 0}],
             "klubber": [{"id": 0, "name": "Andeby Badmintonklub", "admins": [905226362922379], "coaches": [905226362922379], "membershipRequests": []}, {"id": 1, "name": "SIF Badminton Assentoft", "admins": [], "coaches": [], "membershipRequests": []}, {"id": 2, "name": "Randers Badmintonklub", "admins": [], "coaches": [], "membershipRequests": []}, {"id": 3, "name": "Vorup FB", "admins": [], "coaches": [], "membershipRequests": []}, {"id": 4, "name": "Drive Badmintonklub", "admins": [], "coaches": [], "membershipRequests": []}],
-            "traeningspas": [{"id": 0, "name": "A-træning", "club": 0, "startTime": datetime(2016, 12, 24, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [905226362922379], "confirmed": [], "rejected": []}, {"id": 1, "name": "B-træning", "club": 0, "startTime": datetime(2016, 12, 31, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [905226362922379], "confirmed": [], "rejected": []}]}
+            "traeningspas": [{"id": 0, "name": "A-træning", "club": 0, "startTime": datetime(2016, 12, 24, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [], "confirmed": [], "rejected": []}, {"id": 1, "name": "B-træning", "club": 0, "startTime": datetime(2016, 12, 31, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [], "confirmed": [], "rejected": []}]}
 
 
 @app.route("/")
@@ -47,6 +47,7 @@ def users():
                               "name": request.json['name'],
                               "clubs": [],
                               # "email": request.json['email'],
+                              "email": "",
                               "phone": ""}
 
                     database["brugere"].append(bruger)
@@ -88,7 +89,6 @@ def user(userId):
 
         # Are we updating admins list? If so, validate and update. Overwrite
         # existing with input
-        print(request.json)
         if 'clubs' in request.json:
             if not isinstance(request.json['clubs'], list):
                 abort(400)
@@ -246,7 +246,11 @@ def club(clubId):
                         usr = [bruger for bruger in database["brugere"] if bruger["id"] == userId]
                         usr[0]['clubs'].append(0) # Andeby ID
                         print("DEMO MODE: Automatically accept all members to Andeby Badmintonklub. Acceptede:", userId)
-
+                        # We also want all new users to be invited for existing 
+                        # practices in Andeby
+                        andebyPractices = [p for p in database["traeningspas"] if p["club"]  == 0]
+                        for x in andebyPractices:
+                            x["invited"].append(userId)
 
         klub[0]['name'] =  newName
         klub[0]['admins'] = newAdmins
