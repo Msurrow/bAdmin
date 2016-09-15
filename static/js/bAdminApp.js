@@ -298,21 +298,24 @@ myApp.controller('findClubController', ['$scope', '$log', '$location', 'gatekeep
         );    
     };
 
+    var updateUser = function() {
+        bAdminAPI.getUser(gatekeeper.userId).then(
+            function(response) {
+                $scope.currentUser = response.data;
+            },
+            function(error) {
+                $log.debug("Error response from API call:");
+                $log.debug(error);
+            });
+    };
+
     //Init the controller
     (function(){    
         if(!gatekeeper.loggedIn) {
             $log.debug("User not logged in, redirecting to /login");
             $location.path("/login");
         } else {
-            bAdminAPI.getUser(gatekeeper.userId).then(
-                function(response) {
-                    $scope.currentUser = response.data;
-                },
-                function(error) {
-                    $log.debug("Error response from API call:");
-                    $log.debug(error);
-                });
-            
+            updateUser();
             updateClubs();
         }
     })();
@@ -320,6 +323,7 @@ myApp.controller('findClubController', ['$scope', '$log', '$location', 'gatekeep
     $scope.applyAsMember = function(club) {
         bAdminAPI.applyForMembership(club).then(
             function(response) {
+                updateUser();
                 updateClubs();
             },
             function(error) {

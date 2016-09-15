@@ -1,10 +1,10 @@
 TODO Demo version 1:
-- drift setup
-- Demo data
-- Demo mode (ny bruger auto med i Andeby Badmintonklub, ved ny klub oprettelse ansøger Lin Bam and Lee Gong Vej automatisk)
+- Test Louise
+- Test Kristen, Svend Åge
 
 TODO Demo version 2:
 - Demo versions nummer 
+- REDDIS eller PostgresSQL DB
 - wrap API in oauth auth (se svar 2 her http://stackoverflow.com/questions/5406859/facebook-access-token-server-side-validation-for-iphone-app og https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow#checktoken)
 - gatekeeper access token
 
@@ -58,7 +58,6 @@ Feature ønsker:
 - Træningstrupper: opret/rediger, placer medlem på træningstrup, inviter træningstrup (mange medlemmer) ved opret træning
 - Bruger rediger side / slet Bruger (?)
 - Slet Klub (?) 
-- Database / ikke in-memory DB
 - HTTPS
 - Bruger rettigheder: skal bruger X kunne kalder /practices eller /users og få listet alle træningsplan/brugere?
 - GMail login

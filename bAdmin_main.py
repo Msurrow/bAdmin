@@ -8,10 +8,11 @@ import dateutil.parser
 app = Flask(__name__)
 CORS(app)
 
+DEMO_MODE_ENABLED = True
 
-database = {"brugere": [{"id": 0, "name": "Anton", "clubs": [], "email": "", "phone": 12345678}, {"id": 1, "name": "Huggo", "clubs": [], "email": "", "phone": 12345678}, {"id": 2, "name": "Træner Kvinde", "clubs": [0, 1], "email": "", "phone": 12345678}, {"id": 3, "name": "Træner Mand", "clubs": [0], "email": "", "phone": 12345678}, {"id": 905226362922379, "name": "Mark Surrow", "clubs": [0, 1], "email": "msurrow@gmail.com", "phone": 60131201}], #{"id": 905226362922379, "name": "Mark Surrow", "clubs": [0, 1], "email": "msurrow@gmail.com", "phone": 60131201}
-            "klubber": [{"id": 0, "name": "FooKlub", "admins": [2], "coaches": [2, 3], "membershipRequests": []}, {"id": 1, "name": "BarKlub", "admins": [1, 905226362922379], "coaches": [2, 905226362922379], "membershipRequests": [0, 1]}, {"id": 2, "name": "Andeby Badmintonklub", "admins": [], "coaches": [], "membershipRequests": []}],
-            "traeningspas": [{"id": 0, "name": "A-træning", "club": 0, "startTime": datetime(2016, 12, 24, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}, {"id": 1, "name": "B-træning", "club": 0, "startTime": datetime(2016, 12, 31, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}, {"id": 2, "name": "A-træning", "club": 1, "startTime": datetime(2016, 12, 24, 19, 30, 00).isoformat(), "durationMinutes": 120, "invited": [0, 1, 905226362922379], "confirmed": [], "rejected": []}]}
+database = {"brugere": [{"id": 100000000000001, "name": "Lin Bam", "clubs": [0], "email": "", "phone": 0}, {"id": 100000000000002, "name": "Lee Gong Vej", "clubs": [0], "email": "", "phone": 0}],#, {"id": 905226362922379, "name": "Mark Surrow", "clubs": [0], "email": "msurrow@gmail.com", "phone": 0}],
+            "klubber": [{"id": 0, "name": "Andeby Badmintonklub", "admins": [905226362922379], "coaches": [905226362922379], "membershipRequests": []}, {"id": 1, "name": "SIF Badminton Assentoft", "admins": [], "coaches": [], "membershipRequests": []}, {"id": 2, "name": "Randers Badmintonklub", "admins": [], "coaches": [], "membershipRequests": []}, {"id": 3, "name": "Vorup FB", "admins": [], "coaches": [], "membershipRequests": []}, {"id": 4, "name": "Drive Badmintonklub", "admins": [], "coaches": [], "membershipRequests": []}],
+            "traeningspas": [{"id": 0, "name": "A-træning", "club": 0, "startTime": datetime(2016, 12, 24, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [905226362922379], "confirmed": [], "rejected": []}, {"id": 1, "name": "B-træning", "club": 0, "startTime": datetime(2016, 12, 31, 18, 00, 00).isoformat(), "durationMinutes": 120, "invited": [905226362922379], "confirmed": [], "rejected": []}]}
 
 
 @app.route("/")
@@ -88,24 +89,22 @@ def user(userId):
         # Are we updating admins list? If so, validate and update. Overwrite
         # existing with input
         if 'clubs' in request.json:
-            # A club must have at least one admin, and all admins in list are
-            # users
-            if not isinstance(request.json['clubs'], list) or not doesAllUsersInListExist(request.json['clubs']):
+            if not isinstance(request.json['clubs'], list):
                 abort(400)
             else:
                 newClubs = request.json['clubs']
 
-        # Are we updating name? If so, validate and update
+        # Are we updating email? If so, validate and update
         if 'email' in request.json:
-            # Don't allow empty name
+            # Don't allow empty email
             if request.json['email'] is "" or len(request.json['email']) < 1:
                 abort(400)
             else:
                 newEmail = request.json['email']
 
-        # Are we updating name? If so, validate and update
+        # Are we updating phone? If so, validate and update
         if 'phone' in request.json:
-            # Don't allow empty name
+            # Don't allow empty phone
             if request.json['phone'] is "" or len(request.json['phone']) < 1:
                 abort(400)
             else:
@@ -158,12 +157,18 @@ def clubs():
 
         # A club is created without members and coaches, and defaults the admin
         # to the creating user.
+        membershipRequests = []
+        # The two demo players will always apply for membership of new clubs
+        if DEMO_MODE_ENABLED:
+            membershipRequests = [100000000000001, 100000000000002]
+            print("DEMO MODE: Demo players have automatically applied for membership of new club")
+
         newClubId = database["klubber"][-1]["id"]+1
         klub = {"id": newClubId,
                 "name": request.json['name'],
-                "admins": request.json['userID'],
+                "admins": [int(request.json['userID'])],
                 "coaches": [],
-                "membershipRequests": []}
+                "membershipRequests": membershipRequests}
 
         # Since the user created a club, he also needs to be member of the club
         # which is handled in the user object.
@@ -230,6 +235,17 @@ def club(clubId):
                 abort(400)
             else:
                 newMembershipRequests = request.json['membershipRequests']
+                if DEMO_MODE_ENABLED:
+                    # Andeby Badmintonklub will automatically accept all new 
+                    # members
+                    if klub[0]['id'] == 0:
+                        # Nobody will be have a request pending ever
+                        newMembershipRequests = []
+                        userId = int(request.json['userID'])
+                        usr = [bruger for bruger in database["brugere"] if bruger["id"] == userId]
+                        usr[0]['clubs'].append(0) # Andeby ID
+                        print("DEMO MODE: Automatically accept all members to Andeby Badmintonklub. Acceptede:", userId)
+
 
         klub[0]['name'] =  newName
         klub[0]['admins'] = newAdmins
@@ -245,10 +261,11 @@ def club(clubId):
 def clubPractices(clubId):
     print("Auth dummy: ", request.args.get('userID'), ", ", request.args.get('userAccessToken'))
 
-    if not clubId or not isinstance(int(clubId), int):
+    try:
+        cId = int(clubId)
+        return jsonify([tp for tp in database["traeningspas"] if cId is tp["club"]])
+    except:
         abort(404)
-
-    return jsonify([tp for tp in database["traeningspas"] if clubId is tp["club"]])
 
 @app.route("/klubber/<int:clubId>/medlemmer", methods=['GET'])
 def clubMembers(clubId):
@@ -315,7 +332,7 @@ def practices():
         if 'invited' not in request.json or not isinstance(request.json['invited'], list) or not doesAllUsersInListExist(request.json['invited']):
             abort(400)
 
-        repeats = 1        
+        repeats = 1      
         if 'repeats' in request.json and request.json['repeats'] is not None:
             try:
                 if int(request.json['repeats']) <= 0 or int(request.json['repeats']) > 51:
@@ -330,15 +347,31 @@ def practices():
         pDate = dateutil.parser.parse(request.json['startTime'])
         print(pDate)
 
+        invited = request.json['invited']
+        confirmed = []
+        rejected = []
+
+        # Demo date players always confirms/rejects a new practice they are 
+        # invited to
+        if DEMO_MODE_ENABLED:
+            if 100000000000001 in request.json['invited']:
+                rejected = [100000000000001]
+                del invited[invited.index(100000000000001)]
+                print("DEMO MODE: Automatically added Lim Bam to rejected")
+            if 100000000000002 in request.json['invited']:
+                confirmed = [100000000000002]
+                del invited[invited.index(100000000000002)]
+                print("DEMO MODE: Automatically added Lee Gong Vej to confirmed")
+
         for x in range(0, repeats):
             traeningspas = {"id": database["traeningspas"][-1]["id"]+1,
                             "name": request.json['name'],
                             "club": int(request.json['club']),
                             "startTime": pDate,
                             "durationMinutes": request.json['durationMinutes'],
-                            "invited": request.json['invited'],
-                            "confirmed": [],
-                            "rejected": []}
+                            "invited": invited,
+                            "confirmed": confirmed,
+                            "rejected": rejected}
             database["traeningspas"].append(traeningspas)
             # Add one week to the date
             pDate = pDate + timedelta(weeks=1)
