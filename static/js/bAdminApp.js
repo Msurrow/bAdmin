@@ -216,8 +216,11 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
     }
 
     var updatePractices = function() {
+                            $log.debug("updating practices..");
                             bAdminAPI.getUserPractices($scope.currentUserId).then(
                                 function(response) {
+                                    $log.debug("practices updated:");
+                                    $log.debug(response.data);
                                     $scope.currentUserPractices = response.data;
                                 },
                                 function(error) {
@@ -234,6 +237,7 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
 
         bAdminAPI.confirmPractice(practice).then(
             function(response) {
+                $log.debug("confirm practice", practice);
                 updatePractices();
             },
             function(error) {
