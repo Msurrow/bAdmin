@@ -9,7 +9,7 @@ var myApp = angular.module('bAdminApp', [
 
 myApp.config(['$routeProvider', '$logProvider',
     function($routeProvider, $logProvider) {
-        $logProvider.debugEnabled(false);
+        $logProvider.debugEnabled(true);
 
         $routeProvider.
             when('/', {

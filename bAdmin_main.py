@@ -360,6 +360,8 @@ def practice(practiceId):
             abort(400)
         # Design decision: cannot updated clubId.
 
+        print("Updating traeningspas from: ", traeningspas[0])
+
         newStartTime = traeningspas[0]['startTime']
         newDurationMinutes = traeningspas[0]['durationMinutes']
         newInvited = traeningspas[0]['invited']
@@ -414,6 +416,8 @@ def practice(practiceId):
         traeningspas[0]['invited'] = newInvited
         traeningspas[0]['confirmed'] = newConfirmed
         traeningspas[0]['rejected'] = newRejected
+
+        print("Updated traeningspas to: ", traeningspas[0])
 
         return jsonify(traeningspas[0])
 
