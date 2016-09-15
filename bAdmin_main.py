@@ -38,6 +38,7 @@ def users():
             abort(400)
         else:
             try:
+                print(request.json)
                 # Check if the user exits
                 bruger = [bruger for bruger in database["brugere"] if bruger["id"] == int(request.json['userId'])]
                 if len(bruger) == 0:
