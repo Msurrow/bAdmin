@@ -88,6 +88,7 @@ def user(userId):
 
         # Are we updating admins list? If so, validate and update. Overwrite
         # existing with input
+        print(request.json)
         if 'clubs' in request.json:
             if not isinstance(request.json['clubs'], list):
                 abort(400)
