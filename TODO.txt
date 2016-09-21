@@ -1,25 +1,24 @@
-TODO Demo version 1:
-- Alle nye spillere på alle eksisternende træninger i andeby
-- Mark bliver ikke medlem i louises klub
-- Dato i opret træning bliver til "invalid date"
-- Test Kristen, Svend Åge
+bruger feedback round 1:
+- Det skal være muligt at spilleren kan skrive hvorfor han/hun ikke kommer. ved opret træning: check "grund påkrævet"
+- Det skal være muligt at skrive en kort one-liner kommentar til træningen (f.eks. “husk sjippe tov”)
+- Det skal være muligt at se hvem der har meldt til/fra
+- dato ikke korrekt ved opret 51 x træningspas kl 0800 vises som 00.00
+- dato sortering på træningspasliste i adm er ikke datokronologisk (men alphabetisk på numerisk dato eg. 1 aug, 1 sep, 2 aug, 2 sept)
+- Klub navn skal kunne være længere
 
-TODO Demo version 2:
-- Demo versions nummer 
-- Email i opret bruger
-- REDDIS eller PostgresSQL DB
+- Changelog?
+- iOS CSS optimering
+
+- Dato i opret træning bliver til "invalid date" på ios
+- Redis eller PostgresSQL DB
+- Skift til Gunicorn
 - wrap API in oauth auth (se svar 2 her http://stackoverflow.com/questions/5406859/facebook-access-token-server-side-validation-for-iphone-app og https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow#checktoken)
 - gatekeeper access token
 
-TODO Demo version 3:
-- center navbar text
-- admin klub medlem: gør til træner, gør til admin. se http://jsfiddle.net/bmleite/PQvQ2/
-- lav rediger klub side
-- bruger opret og opdater: valider email, valider tlf
-- sanitise input strenge fra POST og PUT (specielt "name")
-- klub auto accepter alle nye spillere indstilling (tilpas labels i findKlub til "du er nu medlem")
+- konsistenstjek datatyper docs in bAdmin_main.py
+- log warnings alle de steder i API hvor GET returnere første element af en liste, og der -mod forventning- er mere end ét element i listen
+- custom errors i API?
 
-TODO Demo version 4:
 - testcases: getuser bad id
 - testcases: træningspas
 - testcases: alle brug af input->datetimes, tjek for input er string og længde. også dateutil.parse
@@ -29,24 +28,29 @@ TODO Demo version 4:
 - testcases: GET klub træningspas
 - testcases: brugere PUT
 
-- custom errors i API?
+- center navbar text
+- Email i opret bruger
+- admin klub medlem: gør til træner, gør til admin. se http://jsfiddle.net/bmleite/PQvQ2/
+- lav rediger klub side
+- bruger opret og opdater: valider email, valider tlf
+- sanitise input strenge fra POST og PUT (specielt "name")
+- klub "auto accepter alle nye spillere" indstilling (tilpas labels i findKlub til "du er nu medlem")
+
 - bedre errors in controllers
-
-- konsistenstjek datatyper docs in bAdmin_main.py
-- log warnings alle de steder i API hvor GET returnere første element af en liste, og der -mod forventning- er mere end ét element i listen
-
+- handle user create error i indexcontroller
 - refaktor bAdminApp.js til en controller pr fil
 - refaktor .tilmeld-traening-btn css om til global liste-knap css
 
-TODO Demo version 5:
-- handle user create error i indexcontroller
+- JS minified versioner 3ed party
+- JS minified bAdminApp
+- Lav deploy-test og deploy-prod scripts
 
 ===========
 Før deploy:
 ===========
-- ikke debug mode Flash
+- ikke debug mode Flask
 - ikke debug logging Angular (config del)
-- brug angular minified versioner
+- baseUrl i bAdminService
 
 ===============
 Kendte fejl:
