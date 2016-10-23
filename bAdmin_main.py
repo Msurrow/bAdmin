@@ -354,8 +354,6 @@ def practices():
         print("CREATE PRACTICE")
         print(request.json)
         pDate = dateutil.parser.parse(request.json['startTime'])
-        print("DATE IN ISO")
-        print(pDate.isoformat())
 
         invited = request.json['invited']
         confirmed = []
