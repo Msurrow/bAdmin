@@ -166,8 +166,8 @@ bAdminAPIService.factory('bAdminAPI', ['$q', '$log', '$http', 'gatekeeper', func
         var clubId = clubId;
         //If name is left empty just use a default
         var practiceName = newPracticeName === "" ? "Træningspas" : newPracticeName;
-        //Parse dato into ISO8601 YYYY-MM-DD HH:MM. Asumes datepicker format option is set correctly. Use dates in UTC
-        var practiceStartTime = moment.utc(newPracticeDate + " " + newPracticeStartHour + ":" + newPracticeStartMinute).toString();
+        //Parse dato into ISO8601 YYYY-MM-DD HH:MMZZ. Asumes datepicker format option is set correctly.
+        var practiceStartTime = moment(newPracticeDate + "T" + newPracticeStartHour + ":" + newPracticeStartMinute).format("YYYY-MM-DDTHH:MMZZ").toString();
 
         var practiceDuration = newPracticeDuration;
         //We include repeats param and let the backend handle it, to avoid multiple requests

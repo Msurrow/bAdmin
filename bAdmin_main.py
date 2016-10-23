@@ -351,9 +351,10 @@ def practices():
                 abort(400)
 
         # A practice is created without confirmed or rejected invitees
+        print("CREATE PRACTICE")
         print(request.json)
-        utc = dateutil.tz.gettz('UTC')
-        pDate = dateutil.parser.parse(request.json['startTime'], tzinfo=utc)
+        pDate = dateutil.parser.parse(request.json['startTime'])
+        print("DATE IN ISO")
         print(pDate.isoformat())
 
         invited = request.json['invited']
@@ -401,7 +402,7 @@ def practice(practiceId):
     if request.method == 'PUT':
         if not request.json:
             abort(400)
-        # Design decision: cannot updated clubId.
+        # Design decision: cannot update clubId.
 
         print("Updating traeningspas from: ", traeningspas[0])
 
