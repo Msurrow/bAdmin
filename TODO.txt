@@ -9,7 +9,8 @@ bruger feedback round 1:
 - Changelog?
 - iOS CSS optimering
 
-- "declined" i stedet for "rejected" 
+- "declined" i stedet for "rejected"
+- formatDate i bAdminApp.js findes i to controllere, fix source copy
 
 - Dato i opret træning bliver til "invalid date" på ios
 - Redis eller PostgresSQL DB
