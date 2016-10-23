@@ -211,8 +211,7 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
     })();
 
     $scope.formatDate = function(date) {
-        moment.locale("da");
-        return moment.utc(date).format("dddd H[:]mm, D MMM Y");
+        return moment(date).format("dddd H[:]mm, D MMM Y");
     }
 
     var updatePractices = function() {

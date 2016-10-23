@@ -416,7 +416,7 @@ def practice(practiceId):
         if 'startTime' in request.json:
             # Start time must be a valid date
             if datetime(request.json['startTime']):
-                newStartTime = datetime(request.json['startTime'])
+                newStartTime = dateutil.parser.parse(request.json['startTime'])
             else:
                 abort(400)
 
