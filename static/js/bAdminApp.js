@@ -211,7 +211,7 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
     })();
 
     $scope.formatDate = function(date) {
-        return moment(date).format("dddd H[:]mm, D MMM Y");
+        return moment(date).local().format("dddd H[:]mm, D MMM Y").toString();
     }
 
     var updatePractices = function() {
@@ -551,7 +551,7 @@ myApp.controller('adminClubController', ['$scope', '$log', 'gatekeeper', '$locat
     }
 
     $scope.formatDate = function(date) {
-        return moment(date).format("dddd H[:]mm, D MMM Y");
+        return moment(date).local().format("dddd H[:]mm, D MMM Y").toString();
     }
 }]);
 
