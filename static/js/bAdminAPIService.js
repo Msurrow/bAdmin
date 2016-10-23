@@ -168,10 +168,10 @@ bAdminAPIService.factory('bAdminAPI', ['$q', '$log', '$http', 'gatekeeper', func
         var practiceName = newPracticeName === "" ? "Træningspas" : newPracticeName;
         //Parse dato into ISO8601 YYYY-MM-DD HH:MMZZ. Asumes datepicker format option is set correctly.
         $log.debug("GOT TIME INPUT: "+newPracticeDate+"  "+newPracticeStartHour+"  "+newPracticeStartMinute)
-        var mdate = moment(newPracticeDate + "T" + newPracticeStartHour + ":" + newPracticeStartMinute).toString();
+        var mdate = moment(newPracticeDate + "T" + newPracticeStartHour + ":" + newPracticeStartMinute)
         var practiceStartTime = mdate.format("YYYY-MM-DDTHH:MMZZ").toString();
-        $log.debug("MOMENT TIME:"+mdate)
-        $log.debug("MOMENT TIME FORMAT:"+practiceStartTime)
+        $log.debug("MOMENT TIME:"+mdate.toString());
+        $log.debug("MOMENT TIME FORMAT:"+practiceStartTime);
 
         var practiceDuration = newPracticeDuration;
         //We include repeats param and let the backend handle it, to avoid multiple requests
