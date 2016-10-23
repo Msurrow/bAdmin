@@ -128,6 +128,9 @@ def userPractices(userId):
     try:
         if not userId or not int(userId):
             abort(404)
+        bruger = [bruger for bruger in database["brugere"] if bruger["id"] == userId]
+        if len(bruger) == 0:
+            abort(404)
     except TypeError:
         abort(400)
 

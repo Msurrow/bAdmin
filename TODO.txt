@@ -9,6 +9,8 @@ bruger feedback round 1:
 - Changelog?
 - iOS CSS optimering
 
+- "declined" i stedet for "rejected" 
+
 - Dato i opret træning bliver til "invalid date" på ios
 - Redis eller PostgresSQL DB
 - Skift til Gunicorn
@@ -65,7 +67,7 @@ Feature ønsker:
 - Træningstrupper: opret/rediger, placer medlem på træningstrup, inviter træningstrup (mange medlemmer) ved opret træning
 - Bruger rediger side / slet Bruger (?)
 - Slet Klub (?) 
-- HTTPS
+- HTTPS (SSL: http://collectiveidea.com/blog/archives/2016/01/12/lets-encrypt-with-a-rails-app-on-heroku/)
 - Bruger rettigheder: skal bruger X kunne kalder /practices eller /users og få listet alle træningsplan/brugere?
 - GMail login
 - Klub administrator kan redigere eksisterende træning (omend blot inviterede)
