@@ -352,8 +352,9 @@ def practices():
 
         # A practice is created without confirmed or rejected invitees
         print(request.json)
-        pDate = dateutil.parser.parse(request.json['startTime'])
-        print(pDate)
+        utc = dateutil.tz.gettz('UTC')
+        pDate = dateutil.parser.parse(request.json['startTime'], tzinfo=utc)
+        print(pDate.isoformat())
 
         invited = request.json['invited']
         confirmed = []
@@ -375,7 +376,7 @@ def practices():
             traeningspas = {"id": database["traeningspas"][-1]["id"]+1,
                             "name": request.json['name'],
                             "club": int(request.json['club']),
-                            "startTime": pDate,
+                            "startTime": pDate.isoformat(),
                             "durationMinutes": request.json['durationMinutes'],
                             "invited": invited,
                             "confirmed": confirmed,
