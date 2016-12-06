@@ -90,7 +90,7 @@ bAdminAPIService.factory('bAdminAPI', ['$q', '$log', '$http', 'gatekeeper', func
 
     bAdminAPIFactory.applyForMembership = function(clubObj) {
         var mreqs = clubObj.membershipRequests.slice();
-        mreqs.push(gatekeeper.userId);
+        mreqs.push(parseInt(gatekeeper.userId));
 
         return $http.put(baseUrl+"klubber/"+clubObj.id, 
             {
@@ -109,7 +109,7 @@ bAdminAPIService.factory('bAdminAPI', ['$q', '$log', '$http', 'gatekeeper', func
         // be in either invited (no selection yet) or rejected (rejected pressed 
         // at some earlier point). 
         var idx = invited.indexOf(parseInt(gatekeeper.userId));
-        if (idx > -1) {
+        if (idx >= 0) {
             confirmed.push(invited[idx]);
             invited.splice(idx, 1);
         } else {

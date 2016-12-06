@@ -351,8 +351,6 @@ def practices():
                 abort(400)
 
         # A practice is created without confirmed or rejected invitees
-        print("CREATE PRACTICE")
-        print(request.json)
         pDate = dateutil.parser.parse(request.json['startTime'])
 
         invited = request.json['invited']
@@ -458,8 +456,6 @@ def practice(practiceId):
         traeningspas[0]['invited'] = newInvited
         traeningspas[0]['confirmed'] = newConfirmed
         traeningspas[0]['rejected'] = newRejected
-
-        print("Updated traeningspas to: ", traeningspas[0])
 
         return jsonify(traeningspas[0])
 
