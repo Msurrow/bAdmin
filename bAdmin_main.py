@@ -11,7 +11,7 @@ CORS(app)
 DEMO_MODE_ENABLED = True
 
 database = {"brugere": [{"id": 100000000000001, "name": "Lin Bam", "clubs": [0], "email": "", "phone": 0}, {"id": 100000000000002, "name": "Lee Gong Vej", "clubs": [0], "email": "", "phone": 0}],#, {"id": 905226362922379, "name": "Mark Surrow", "clubs": [0], "email": "msurrow@gmail.com", "phone": 0}],
-            "klubber": [{"id": 0, "name": "Andeby Badmintonklub", "admins": [905226362922379], "coaches": [905226362922379], "membershipRequests": []}, {"id": 1, "name": "SIF Badminton Assentoft", "admins": [], "coaches": [], "membershipRequests": []}, {"id": 2, "name": "Randers Badmintonklub", "admins": [], "coaches": [], "membershipRequests": []}, {"id": 3, "name": "Vorup FB", "admins": [], "coaches": [], "membershipRequests": []}, {"id": 4, "name": "Drive Badmintonklub", "admins": [], "coaches": [], "membershipRequests": []}],
+            "klubber": [{"id": 0, "name": "Andeby Badmintonklub", "admins": [905226362922379], "coaches": [905226362922379], "membershipRequests": [], "members": []}, {"id": 1, "name": "SIF Badminton Assentoft", "admins": [], "coaches": [], "membershipRequests": [], "members": []}, {"id": 2, "name": "Randers Badmintonklub", "admins": [], "coaches": [], "membershipRequests": [], "members": []}, {"id": 3, "name": "Vorup FB", "admins": [], "coaches": [], "membershipRequests": [], "members": []}, {"id": 4, "name": "Drive Badmintonklub", "admins": [], "coaches": [], "membershipRequests": [], "members": []}],
             "traeningspas": [{"id": 0, "name": "A-træning", "club": 0, "startTime": "2016-12-24T12:00:00+13:00", "durationMinutes": 120, "invited": [], "confirmed": [], "rejected": []}, {"id": 1, "name": "B-træning", "club": 0, "startTime": "2016-12-24T12:00:00+02:00", "durationMinutes": 120, "invited": [], "confirmed": [], "rejected": []}]}
 
 
@@ -145,6 +145,7 @@ Klub datatype:
     admins: <list:int>, not empty, int must be id of existing Bruger
     coaches: <list:int>, int must be id of existing Bruger
     membershipRequests: <list:int, int must be id of existing Bruger
+    members: <list:int>, int must be id of existing Bruger
 }
 """
 @app.route("/klubber", methods=['GET', 'POST'])
@@ -159,6 +160,14 @@ def clubs():
             if request.json['name'] is "" or len(request.json['name']) < 3:
                 abort(400)
 
+        # Does the userID exis and is it valid
+        userId = -1
+        if 'userID' in request.json:
+            try: 
+               userId = int(request.json['userID'])       
+            except:
+                abort(400)
+
         # A club is created without members and coaches, and defaults the admin
         # to the creating user.
         membershipRequests = []
@@ -170,9 +179,10 @@ def clubs():
         newClubId = database["klubber"][-1]["id"]+1
         klub = {"id": newClubId,
                 "name": request.json['name'],
-                "admins": [int(request.json['userID'])],
+                "admins": [userId],
                 "coaches": [],
-                "membershipRequests": membershipRequests}
+                "membershipRequests": membershipRequests,
+                "members": [userId]}
 
         # Since the user created a club, he also needs to be member of the club
         # which is handled in the user object.
@@ -203,6 +213,7 @@ def club(clubId):
         newAdmins = klub[0]['admins']
         newCoaches = klub[0]['coaches']
         newMembershipRequests = klub[0]['membershipRequests']
+        newMembers = klub[0]['members']
 
         # Are we updating name? If so, validate and update
         if 'name' in request.json:
@@ -242,12 +253,13 @@ def club(clubId):
                 if DEMO_MODE_ENABLED:
                     # Andeby Badmintonklub will automatically accept all new 
                     # members
-                    if klub[0]['id'] == 0:
+                    if klub[0]['id'] == 0: # Andeby ID
                         # Nobody will be have a request pending ever
                         newMembershipRequests = []
                         userId = int(request.json['userID'])
                         usr = [bruger for bruger in database["brugere"] if bruger["id"] == userId]
                         usr[0]['clubs'].append(0) # Andeby ID
+                        klub[0]['members'].append(userId)
                         print("DEMO MODE: Automatically accept all members to Andeby Badmintonklub. Acceptede:", userId)
                         # We also want all new users to be invited for existing 
                         # practices in Andeby
@@ -255,10 +267,21 @@ def club(clubId):
                         for x in andebyPractices:
                             x["invited"].append(userId)
 
+        # Are we updating membership requests list? If so, validate and update.
+        # Overwrite existing with input
+        if 'members' in request.json:
+            # Check all requests are from actual users
+            if not isinstance(request.json['members'], list) or not doesAllUsersInListExist(request.json['members']):
+                abort(400)
+            else:
+                newMembers = request.json['members']
+
+
         klub[0]['name'] =  newName
         klub[0]['admins'] = newAdmins
         klub[0]['coaches'] = newCoaches
         klub[0]['membershipRequests'] = newMembershipRequests
+        klub[0]['members'] = newMembers
 
         return jsonify(klub[0])
     # GET

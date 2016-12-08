@@ -217,10 +217,13 @@ bAdminAPIService.factory('bAdminAPI', ['$q', '$log', '$http', 'gatekeeper', func
         var membershipRequests = club.membershipRequests;
         var idx = membershipRequests.indexOf(userId);
         membershipRequests.splice(idx, 1);
+        var members = club.members;
+        members.push(userId);
 
         return $http.put(baseUrl+"klubber/"+clubId, 
         {
             "membershipRequests": membershipRequests,
+            "members": members,
             "userID": gatekeeper.userId,
             "userAccessToken": gatekeeper.userAccessToken            
         });
@@ -252,15 +255,21 @@ bAdminAPIService.factory('bAdminAPI', ['$q', '$log', '$http', 'gatekeeper', func
             newAdmins.splice(idx, 1);
         }
         var newCoaches = club.coaches;
-        var idx = newCoaches.indexOf(user.id);
+        idx = newCoaches.indexOf(user.id);
         if (idx > -1) {
             newCoaches.splice(idx, 1);
+        }
+        var newMembers = club.members;
+        idx = newMembers.indexOf(user.id);
+        if (idx > -1) {
+            newMembers.splice(idx, 1);
         }
 
         return $q.all([$http.put(baseUrl+"klubber/"+club.id, 
         {
             "admins": newAdmins,
             "coaches": newCoaches,
+            "members": newMembers,
             "userID": gatekeeper.userId,        
             "userAccessToken": gatekeeper.userAccessToken 
         }).then(function(response) {
