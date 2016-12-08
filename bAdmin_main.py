@@ -277,7 +277,7 @@ def club(clubId):
             else:
                 # If we are removing a member, we should remove him from all
                 # practices she has been invited to as well
-                if newMembers.count > request.json['members']:
+                if newMembers.count > request.json['members'].count:
                     # This will only return the IDs that are in newMembers
                     # while not in json.members, AND NOT any members that may
                     # be in json.members while not in newMembers.
