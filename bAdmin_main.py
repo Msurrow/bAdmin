@@ -205,6 +205,7 @@ def club(clubId):
 
     if request.method == 'PUT':
         if not request.json:
+            print("DEADBEEF: 1")
             abort(400)
 
         # Default all values to existing values such that missing values
@@ -219,6 +220,7 @@ def club(clubId):
         if 'name' in request.json:
             # Don't allow empty name
             if request.json['name'] is "" or len(request.json['name']) < 1:
+                print("DEADBEEF: 2")
                 abort(400)
             else:
                 newName = request.json['name']
@@ -229,6 +231,7 @@ def club(clubId):
             # A club must have at least one admin, and all admins in list are 
             # users
             if not isinstance(request.json['admins'], list) or len(request.json['admins']) < 1 or not doesAllUsersInListExist(request.json['admins']):
+                print("DEADBEEF: 3")
                 abort(400)
             else:
                 newAdmins = request.json['admins']
@@ -238,6 +241,7 @@ def club(clubId):
         if 'coaches' in request.json:
             # Check all coaches in list are users
             if not isinstance(request.json['coaches'], list) or not doesAllUsersInListExist(request.json['coaches']):
+                print("DEADBEEF: 4")
                 abort(400)
             else:
                 newCoaches = request.json['coaches']
@@ -247,6 +251,7 @@ def club(clubId):
         if 'membershipRequests' in request.json:
             # Check all requests are from actual users
             if not isinstance(request.json['membershipRequests'], list) or not doesAllUsersInListExist(request.json['membershipRequests']):
+                print("DEADBEEF: 5")
                 abort(400)
             else:
                 newMembershipRequests = request.json['membershipRequests']
@@ -274,6 +279,7 @@ def club(clubId):
         if 'members' in request.json:
             # Check all requests are from actual users
             if not isinstance(request.json['members'], list) or not doesAllUsersInListExist(request.json['members']):
+                print("DEADBEEF: 6")
                 abort(400)
             else:
                 newMembers = request.json['members']
