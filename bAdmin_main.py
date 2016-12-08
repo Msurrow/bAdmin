@@ -275,6 +275,22 @@ def club(clubId):
             if not isinstance(request.json['members'], list) or not doesAllUsersInListExist(request.json['members']):
                 abort(400)
             else:
+                # If we are removing a member, we should remove him from all
+                # practices she has been invited to as well
+                if newMembers.count > request.json['members']:
+                    # This will only return the IDs that are in newMembers
+                    # while not in json.members, AND NOT any members that may
+                    # be in json.members while not in newMembers.
+                    removed = set(newMembers) - set(request.json['members'])
+                    clubPractices = [tp for tp in database["traeningspas"] if klub.id is tp["club"]]
+                    for rId in removed:
+                        for p in clubPractices:
+                            if rId in p.confirmed:
+                                p.remove(rId)
+                            if rId in p.invited:
+                                p.remove(rId)
+                            if rId in p.rejected:
+                                p.remove(rId)
                 newMembers = request.json['members']
 
 
