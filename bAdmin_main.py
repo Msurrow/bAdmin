@@ -282,7 +282,7 @@ def club(clubId):
                     # while not in json.members, AND NOT any members that may
                     # be in json.members while not in newMembers.
                     removed = set(newMembers) - set(request.json['members'])
-                    clubPractices = [tp for tp in database["traeningspas"] if klub[0].id is tp["club"]]
+                    clubPractices = [tp for tp in database["traeningspas"] if klub[0]['id'] is tp["club"]]
                     for rId in removed:
                         for p in clubPractices:
                             if rId in p.confirmed:
