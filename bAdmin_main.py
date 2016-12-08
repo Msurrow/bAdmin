@@ -285,12 +285,12 @@ def club(clubId):
                     clubPractices = [tp for tp in database["traeningspas"] if klub[0]['id'] is tp["club"]]
                     for rId in removed:
                         for p in clubPractices:
-                            if rId in p.confirmed:
-                                p.remove(rId)
-                            if rId in p.invited:
-                                p.remove(rId)
-                            if rId in p.rejected:
-                                p.remove(rId)
+                            if rId in p['confirmed']:
+                                p['confirmed'].remove(rId)
+                            if rId in p['invited']:
+                                p['invited'].remove(rId)
+                            if rId in p['rejected']:
+                                p['rejected'].remove(rId)
                 newMembers = request.json['members']
 
 
