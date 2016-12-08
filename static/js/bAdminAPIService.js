@@ -212,7 +212,7 @@ bAdminAPIService.factory('bAdminAPI', ['$q', '$log', '$http', 'gatekeeper', func
             "userAccessToken": gatekeeper.userAccessToken            
         });
 
-        // Update club object server side with new membershipRequests list
+        // Update club object server side with new membershipRequests and members list
         var clubId = club.id;
         var membershipRequests = club.membershipRequests;
         var idx = membershipRequests.indexOf(userId);
