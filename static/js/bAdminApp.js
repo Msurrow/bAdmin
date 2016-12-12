@@ -228,48 +228,48 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
                                 });  
                         } 
 
-    // $scope.confirmPractice = function(practice) {
-    //     // Check if the user pressed the confirm button again, ignore if so
-    //     if($scope.practiceSelectionIsConfirmed(practice)) {
-    //         return;
-    //     }
+    $scope.confirmPractice = function(practice) {
+        // Check if the user pressed the confirm button again, ignore if so
+        if($scope.practiceSelectionIsConfirmed(practice)) {
+            return;
+        }
 
-    //     bAdminAPI.confirmPractice(practice).then(
-    //         function(response) {
-    //             $log.debug("confirm practice", practice);
-    //             updatePractices();
-    //         },
-    //         function(error) {
-    //             $log.debug("Error response from API call:");
-    //             $log.debug(error);                
-    //         });
-    // };  
+        bAdminAPI.confirmPractice(practice).then(
+            function(response) {
+                $log.debug("confirm practice", practice);
+                updatePractices();
+            },
+            function(error) {
+                $log.debug("Error response from API call:");
+                $log.debug(error);                
+            });
+    };  
 
-    // $scope.rejectPractice = function(practice) {
-    //     // Check if the user pressed the reject button again, ignore if so
-    //     if($scope.practiceSelectionIsRejected(practice)) {
-    //         return;
-    //     }
+    $scope.rejectPractice = function(practice) {
+        // Check if the user pressed the reject button again, ignore if so
+        if($scope.practiceSelectionIsRejected(practice)) {
+            return;
+        }
 
-    //     bAdminAPI.rejectPractice(practice).then(
-    //         function(response) {
-    //             updatePractices();
-    //         },
-    //         function(error) {
-    //             $log.debug("Error response from API call:");
-    //             $log.debug(error);                
-    //         });;
-    // }
+        bAdminAPI.rejectPractice(practice).then(
+            function(response) {
+                updatePractices();
+            },
+            function(error) {
+                $log.debug("Error response from API call:");
+                $log.debug(error);                
+            });;
+    }
 
-    // $scope.practiceSelectionIsConfirmed = function(practice) {
-    //     var idx = $scope.currentUserPractices.indexOf(practice);        
-    //     return $scope.currentUserPractices[idx].confirmed.indexOf($scope.currentUserId) > -1;
-    // }
+    $scope.practiceSelectionIsConfirmed = function(practice) {
+        var idx = $scope.currentUserPractices.indexOf(practice);        
+        return $scope.currentUserPractices[idx].confirmed.indexOf($scope.currentUserId) > -1;
+    }
 
-    // $scope.practiceSelectionIsRejected = function(practice) {
-    //     var idx = $scope.currentUserPractices.indexOf(practice);        
-    //     return $scope.currentUserPractices[idx].rejected.indexOf($scope.currentUserId) > -1;
-    // }
+    $scope.practiceSelectionIsRejected = function(practice) {
+        var idx = $scope.currentUserPractices.indexOf(practice);        
+        return $scope.currentUserPractices[idx].rejected.indexOf($scope.currentUserId) > -1;
+    }
 
     $scope.isCoachOrAdmin = function(club) {
         if ($scope.currentUserClubsAsCoachOrAdmin.indexOf(club) > -1) {
