@@ -84,7 +84,7 @@ myApp.run(['$rootScope', '$window', '$log', 'gatekeeper', '$location', function(
     }
 
     window.fbAsyncInit = function() {
-        $log.debug("OAuth login: fbAsyncInit() called.")
+        $log.debug("OAuth Login: fbAsyncInit() called.")
         FB.init({
             appId      : '525282354344891',
             cookie     : true,  // enable cookies to allow the server to access 
@@ -119,19 +119,20 @@ myApp.run(['$rootScope', '$window', '$log', 'gatekeeper', '$location', function(
     };
 
     // Load the SDK asynchronously
-    (function(d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_US/sdk.js";
-        fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
+    // !!!
+    // (function(d, s, id) {
+    //     var js, fjs = d.getElementsByTagName(s)[0];
+    //     if (d.getElementById(id)) return;
+    //     js = d.createElement(s); js.id = id;
+    //     js.src = "//connect.facebook.net/en_US/sdk.js";
+    //     fjs.parentNode.insertBefore(js, fjs);
+    // }(document, 'script', 'facebook-jssdk'));
 }]);
 
 myApp.controller('ngviewController', ['$scope', '$log', function($scope, $log) {
     $scope.$on('$viewContentLoaded', function() {
         //Re-render all Facebook buttons
-        if(typeof(FB) != 'undefined') {FB.XFBML.parse();}
+        // !!! if(typeof(FB) != 'undefined') {FB.XFBML.parse();}
     });    
 }]);
 
@@ -146,12 +147,15 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
 
     //Init the controller
     (function(){
+        gatekeeper.doLogin(905226362922379, "Mark Surrow", "response.email");
         if(!gatekeeper.loggedIn) {
             $log.debug("User not logged in, redirecting to /login");
             $location.path("/login");
         } else {
             bAdminAPI.getUser(gatekeeper.userId).then(
                 function(response) {
+                    $log.debug("FOOBAR1")
+                    $log.debug(response.data)
                     $scope.currentUserId = response.data.id;
                     $scope.currentUserName = response.data.name;
                     $scope.currentUserPhone = response.data.phone;
@@ -191,8 +195,10 @@ myApp.controller('indexController', ['$rootScope', '$scope', '$log', '$location'
                     $rootScope.currentUserName = $scope.currentUserName;
                 }, 
                 function(error) {
+                    $log.debug("FOOBAR2")
                     // User did not exits. If we are logged in, try to create the user
                     // and redo request
+                    $log.debug("User doesn't exis -creating user")
                     if (gatekeeper.loggedIn) {
                         // Service gets all arguments from gatekeeper
                         bAdminAPI.saveNewUser().then(
